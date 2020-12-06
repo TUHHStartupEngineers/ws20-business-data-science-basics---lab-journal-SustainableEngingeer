@@ -24,7 +24,7 @@ $~$
 
 ### Result
 
-Time course of the cumulative COVID-19 cases in France, Germany, Spain, UK and the US.
+Time course of the cumulative COVID-19 cases in _France_, _Germany_, _Spain_, _UK_ and the _US_.
 ```{r, fig.width=10, fig.height=7}
 cases_worldwide <- readRDS("data/05-1_line-plot_cases-worldwide.rds")
 
@@ -311,17 +311,359 @@ $~$
 
 $~$
 
+
+
 # 3rd Assignmend -- Data Wrangling
 
-## PART 1
-
-## PART 2
-
-
+ $~$
+ 
+From now on: Teamwork with Philip Salmang
 
 
+```{r eval = FALSE}
+library(data.table)   # Extension of 'data.frame' for fast manipulation of large Data 
+library(tidyverse)    # Main Package - Loads dplyr, purrr, etc.
+library(vroom)        # Read and Write Rectangular Text Data Quickly
+library(lubridate)
 
 
+# 1.0 Set up and defining columns that we are interested in ----
+# 1.0.1 for files that will be read
+col_types <- list(
+  id = col_character(),
+  date = col_date("%Y-%m-%d"),
+  num_claims = col_double())
+
+# 1.0.2 patent_assignee_col_types
+patent_assignee_col_types <- list(patent_id = col_character(),   
+                                  assignee_id = col_character())
+
+# 1.0.3 assignee_col_types
+assignee_col_types <- list(id = col_character(),
+                           type = col_character(),
+                           organization = col_character())
+
+# 1.0.4 uspc_tbl
+uspc_col_types <- list(patent_id = col_character(), 
+                       mainclass_id = col_character() , 
+                       sequence = col_character())
+
+## 1.1 Reading data to create tables
+# 1.1.1 Creating patent_tbl
+patent_tbl <- vroom(
+  file       = "/Users/philipsalmang/Documents/R/Business Data Science Basics/DS_101/00_data/Patent/raw_data/patent.tsv", 
+  delim      = "\t", 
+  col_types  = col_types,
+  na         = c("", "NA", "NULL")) 
+setDT(patent_tbl)
+
+# 1.1.2 Creating patent_assignee_tbl
+patent_assignee_tbl <- vroom(
+  file       = "/Users/philipsalmang/Documents/R/Business Data Science Basics/DS_101/00_data/Patent/raw_data/patent_assignee.tsv", 
+  delim      = "\t", 
+  col_types  = patent_assignee_col_types,
+  na         = c("", "NA", "NULL"))
+setDT(patent_assignee_tbl)
+# 1.1.3 Creating assignee_tbl
+assignee_tbl <- vroom(
+  file       = "/Users/philipsalmang/Documents/R/Business Data Science Basics/DS_101/00_data/Patent/raw_data/assignee.tsv", 
+  delim      = "\t", 
+  col_types  = assignee_col_types,
+  na         = c("", "NA", "NULL"))
+setDT(assignee_tbl)
+
+## 1.1.4 Creating uspc_tbl
+uspc_tbl <- vroom(
+  file       = "/Users/philipsalmang/Documents/R/Business Data Science Basics/DS_101/00_data/Patent/raw_data/uspc.tsv", 
+  delim      = "\t", 
+  col_types  = uspc_col_types,
+  na         = c("", "NA", "NULL")) %>%
+  # remove column sequence since it is not needed
+  subset(select = -sequence) 
+setDT(uspc_tbl)
+
+# make a uspc table with unique combos of patent_id and mainclass_id
+uspc_unique_tbl <- uspc_tbl[, .(patent_id, mainclass_id)] %>% unique()
+
+## 1.3 Merge necessary tables for extracting relevant data
+
+# 1.3.1 Merge patent_assignee_tbl and assignee_tbl
+
+patent_assignee_merge_dt <- merge(x = assignee_tbl, y = patent_assignee_tbl,
+                                  by.x = "id",
+                                  by.y = "assignee_id")
+# 1.3.2 Merge patent_assignee_merge_dt and patent_tbl;
+# patent_dominance_dt used in Challenge 1 and 2 
+patent_dominance_dt <- merge(x = patent_assignee_merge_dt, y = patent_tbl,
+                             by.x = "patent_id",
+                             by.y = "id",
+                             all.x = T, 
+                             all.y = F)
+
+# Change Date into year, month, day
+patent_dominance_dt <- patent_dominance_dt[, .(patent_id, 
+                                               id,
+                                               type,
+                                               organization, 
+                                               year = year(date),
+                                               month = month(date),
+                                               day = day(date))]
+
+# 1.3.3 Merge patent_dominance_dt and uspc_tbl; 
+# patent_dominance_innovation_dt only used in Challenge 3
+
+patent_dominance_innovation_dt <- merge(x = uspc_unique_tbl, 
+                                        y = patent_dominance_dt,
+                                        by = "patent_id",
+                                        all.x = F, 
+                                        all.y = T)
+
+
+## 2.0 Challenge 1, Patent Dominance: What US company / corporation has the most patents? List the ----
+# 10 US companies with the most assigned/granted patents.
+# include only type = 2,4,6,8,9 since these are US companies, sort by organizations
+# and count the number of Patents they have. Omit any N/A values. Sort by 
+# decreasing order
+patent_dominance_US_dt <- 
+  patent_dominance_dt[!is.na(organization)][         # remove any rows containing NA 
+    type %in% c(2,4,6,8,9),.N, by = organization     # Filter for US companies and count
+  ][,.(Nr_Patents = N, organization)][               # Rename N 
+    order(Nr_Patents, decreasing = TRUE)             # Order Nr_Patents decreasing order
+  ][1:10,]                                           # slice to get first 10 companies
+write_rds(patent_dominance_US_dt,"patent_dominance_US_dt.rds")
+
+## 3.0 Challenge 2, Recent patent activity: What US company had the most patents granted in July? ----
+# List the top 10 companies with the most new granted patents for July. 
+# include only type = 2,4,6,8,9 since these are US companies, sort by organizations
+# and filter month 7 and count the number of Patents they have. 
+# Omit any N/A values. Sort by decreasing order
+patent_dominance_july_US_dt <- 
+  patent_dominance_dt[
+    !is.na(organization)                             # remove any rows containing NA 
+  ][month == 7,.(id, type, organization)][           # Filter for month 7
+    type %in% c(2,4,6,8,9),.N, by = organization     # Filter for US companies and count 
+  ][,.(Nr_Patents = N, organization)][               # Rename N 
+    order(Nr_Patents,decreasing = TRUE)              # Order Nr_Patents decreasing order
+  ][1:10,]                                           # slice to get first 10 companies
+
+write_rds(patent_dominance_july_US_dt,"patent_dominance_july_US_dt.rds")
+
+
+## 4.0 Challenge 3, Innovation in Tech:  What is the most innovative tech sector?  ----
+# For the top 10 companies (worldwide) with the most patents, 
+# what are the top 5 USPTO tech main classes?
+
+# 4.1 Extracting Top 10 Organizations with most patents
+patent_dominance_world_dt <- 
+  patent_dominance_dt[!is.na(organization)][         # remove any rows containing NA 
+    ,.N, by = organization                           # Count the amount of patents for each company
+  ][,.(Nr_Patents = N, organization)][               # Rename N 
+    order(Nr_Patents,decreasing = TRUE)              # Order Nr_Patents decreasing order
+  ][1:10,]                                           # slice to get first 10 companies
+
+# 4.2 Extracting Top 5 mainclass_id of Top 10 Organizations with
+# patent_dominance_innovation_dt
+top_mainclass <- merge(x = patent_dominance_world_dt,
+                       y = patent_dominance_innovation_dt,
+                       by = "organization") %>%   
+  # Remove unnecessary columns
+  subset(select = -c(id, type, year, month, day, Nr_Patents)) 
+
+# Extracting Top 5 mainclasses out of top_mainclass
+top_5_mainclass <- 
+  top_mainclass[!is.na(mainclass_id)][               # remove any rows containing NA 
+    ,.N, by = mainclass_id                           # Count the amount of each mainclass_id
+  ][,
+    .(Nr_mainclass = N, mainclass_id)][              # Rename N 
+      order(Nr_mainclass, decreasing = TRUE)         # Order Nr_mainclass decreasing order
+    ][1:5,]                                          # slice to get first 5 mainclass_id
+write_rds(top_5_mainclass,"top_5_mainclass.rds")
+```
+
+## Preparation of Data
+```{r eval = FALSE}
+library(vroom)   
+# 1.0 Set up and defining columns that we are interested in ----
+# 1.0.1 for files that will be read
+col_types <- list(
+  id = col_character(),
+  date = col_date("%Y-%m-%d"),
+  num_claims = col_double())
+
+# 1.0.2 patent_assignee_col_types
+patent_assignee_col_types <- list(patent_id = col_character(),   
+                                  assignee_id = col_character())
+
+# 1.0.3 assignee_col_types
+assignee_col_types <- list(id = col_character(),
+                           type = col_character(),
+                           organization = col_character())
+
+# 1.0.4 uspc_tbl
+uspc_col_types <- list(patent_id = col_character(), 
+                       mainclass_id = col_character() , 
+                       sequence = col_character())
+
+## 1.1 Reading data to create tables
+# 1.1.1 Creating patent_tbl
+patent_tbl <- vroom(
+  file       = "/Users/philipsalmang/Documents/R/Business Data Science Basics/DS_101/00_data/Patent/raw_data/patent.tsv", 
+  delim      = "\t", 
+  col_types  = col_types,
+  na         = c("", "NA", "NULL")) 
+setDT(patent_tbl)
+
+# 1.1.2 Creating patent_assignee_tbl
+patent_assignee_tbl <- vroom(
+  file       = "/Users/philipsalmang/Documents/R/Business Data Science Basics/DS_101/00_data/Patent/raw_data/patent_assignee.tsv", 
+  delim      = "\t", 
+  col_types  = patent_assignee_col_types,
+  na         = c("", "NA", "NULL"))
+setDT(patent_assignee_tbl)
+# 1.1.3 Creating assignee_tbl
+assignee_tbl <- vroom(
+  file       = "/Users/philipsalmang/Documents/R/Business Data Science Basics/DS_101/00_data/Patent/raw_data/assignee.tsv", 
+  delim      = "\t", 
+  col_types  = assignee_col_types,
+  na         = c("", "NA", "NULL"))
+setDT(assignee_tbl)
+
+## 1.1.4 Creating uspc_tbl
+uspc_tbl <- vroom(
+  file       = "/Users/philipsalmang/Documents/R/Business Data Science Basics/DS_101/00_data/Patent/raw_data/uspc.tsv", 
+  delim      = "\t", 
+  col_types  = uspc_col_types,
+  na         = c("", "NA", "NULL")) %>%
+  # remove column sequence since it is not needed
+  subset(select = -sequence) 
+setDT(uspc_tbl)
+
+# make a uspc table with unique combos of patent_id and mainclass_id
+uspc_unique_tbl <- uspc_tbl[, .(patent_id, mainclass_id)] %>% unique()
+
+## 1.3 Merge necessary tables for extracting relevant data
+
+# 1.3.1 Merge patent_assignee_tbl and assignee_tbl
+
+patent_assignee_merge_dt <- merge(x = assignee_tbl, y = patent_assignee_tbl,
+                                  by.x = "id",
+                                  by.y = "assignee_id")
+# 1.3.2 Merge patent_assignee_merge_dt and patent_tbl;
+# patent_dominance_dt used in Challenge 1 and 2 
+patent_dominance_dt <- merge(x = patent_assignee_merge_dt, y = patent_tbl,
+                             by.x = "patent_id",
+                             by.y = "id",
+                             all.x = T, 
+                             all.y = F)
+
+# Change Date into year, month, day
+patent_dominance_dt <- patent_dominance_dt[, .(patent_id, 
+                                               id,
+                                               type,
+                                               organization, 
+                                               year = year(date),
+                                               month = month(date),
+                                               day = day(date))]
+
+# 1.3.3 Merge patent_dominance_dt and uspc_tbl; 
+# patent_dominance_innovation_dt only used in Challenge 3
+
+patent_dominance_innovation_dt <- merge(x = uspc_unique_tbl, 
+                                        y = patent_dominance_dt,
+                                        by = "patent_id",
+                                        all.x = F, 
+                                        all.y = T)
+```
+
+In this step, all needded data was read into the variables `patent_tbl`,`patent_assignee_tbl`,`assignee_tbl` and `uspc_tbl`. The Data was wrangled in such a way, that not needed columns were deleted and new tables were created by merging the existings tables. The specific variables needed in the upcoming challenges are mentioned inside the code.
+
+
+$~$
+
+## Patent Dominance (Challenge 1)
+
+```{r eval = FALSE}
+patent_dominance_US_dt <- 
+  patent_dominance_dt[!is.na(organization)][         # remove any rows containing NA 
+    type %in% c(2,4,6,8,9),.N, by = organization     # Filter for US companies and count
+  ][,.(Nr_Patents = N, organization)][               # Rename N 
+    order(Nr_Patents, decreasing = TRUE)             # Order Nr_Patents decreasing order
+  ][1:10,]                                           # slice to get first 10 companies
+
+```
+
+$~$
+
+What US company / corporation has the most patents? List of the 10 US companies with the most assigned/granted patents.
+```{r eval = TRUE}
+patent_dominance_US_dt <- readRDS("data/patent_dominance_US_dt.rds")
+patent_dominance_US_dt
+```
+
+$~$
+
+## Recent activity (Challenge 2)
+
+```{r eval=FALSE}
+patent_dominance_july_US_dt <- 
+  patent_dominance_dt[
+    !is.na(organization)                             # remove any rows containing NA 
+  ][month == 7,.(id, type, organization)][           # Filter for month 7
+    type %in% c(2,4,6,8,9),.N, by = organization     # Filter for US companies and count 
+  ][,.(Nr_Patents = N, organization)][               # Rename N 
+    order(Nr_Patents,decreasing = TRUE)              # Order Nr_Patents decreasing order
+  ][1:10,]                                           # slice to get first 10 companies
+```
+$~$
+
+What US company had the most patents granted in 2019? Top 10 companies with the most new granted patents for 2019.
+```{r eval = TRUE}
+patent_dominance_US_dt <- readRDS("data/patent_dominance_july_US_dt.rds")
+patent_dominance_US_dt
+```
+
+$~$
+
+## Most Innovative Main Classes (Challenge 3)
+
+```{r eval = FALSE}
+patent_dominance_world_dt <- 
+  patent_dominance_dt[!is.na(organization)][         # remove any rows containing NA 
+    ,.N, by = organization                           # Count the amount of patents for each company
+  ][,.(Nr_Patents = N, organization)][               # Rename N 
+    order(Nr_Patents,decreasing = TRUE)              # Order Nr_Patents decreasing order
+  ][1:10,]                                           # slice to get first 10 companies
+
+# 4.2 Extracting Top 5 mainclass_id of Top 10 Organizations with
+# patent_dominance_innovation_dt
+top_mainclass <- merge(x = patent_dominance_world_dt,
+                       y = patent_dominance_innovation_dt,
+                       by = "organization") %>%   
+  # Remove unnecessary columns
+  subset(select = -c(id, type, year, month, day, Nr_Patents)) 
+
+# Extracting Top 5 mainclasses out of top_mainclass
+top_5_mainclass <- 
+  top_mainclass[!is.na(mainclass_id)][               # remove any rows containing NA 
+    ,.N, by = mainclass_id                           # Count the amount of each mainclass_id
+  ][,
+    .(Nr_mainclass = N, mainclass_id)][              # Rename N 
+      order(Nr_mainclass, decreasing = TRUE)         # Order Nr_mainclass decreasing order
+    ][1:5,]                                          # slice to get first 5 mainclass_id
+```
+
+$~$
+
+What is the most innovative tech sector?
+The top 5 USPTO tech main classes for the top 10 companies (worldwide) with the most patents are:
+```{r eval = TRUE}
+patent_dominance_US_dt <- readRDS("data/top_5_mainclass.rds")
+patent_dominance_US_dt
+```
+
+
+$~$
+$~$
 
 
 
@@ -333,7 +675,7 @@ $~$
 
 ### Result
 
-The following data are downloaded from [football98](https://football98.p.rapidapi.com/liga/scorers)-API (Last Update: 20/12/06). It contains information about all football players from Italian football Serie A.
+The following data are downloaded from [football98](https://football98.p.rapidapi.com/liga/scorers)-API (Last Update: 20/12/06). It contains information about all football players from Italian football _Serie A_.
 
 ```{r}
 serie_a_players <- readRDS("data/03-1_serie-a-players.rds")
@@ -386,7 +728,7 @@ The following data are scraped from
 
 ### Result
 
-The bike manufacturer has the following product families
+The bike manufacturer has the following _product families_
 ```{r}
 bike_family_tbl <- readRDS("data/bike_family_tbl.rds")
 
@@ -395,7 +737,7 @@ bike_family_tbl
 
 $~$
 
-Each of them is on after another divided into two categories
+Each of them is on after another divided into two _product categories_
 ```{r}
 bike_category_tbl <- readRDS("data/bike_category_tbl.rds")
 
@@ -540,6 +882,8 @@ Last compiled: `r Sys.Date()`
 As shown in the bar plot, North Rhine-Westphalia has by far the highest revenue
 
 ```{r, fig.width=10, fig.height=7}
+  library(tidyverse)
+  
   sales_by_state_tbl <- readRDS("data/sales_by_state_tbl.rds")
 
   library(ggrepel)

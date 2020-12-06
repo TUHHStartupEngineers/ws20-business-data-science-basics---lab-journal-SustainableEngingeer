@@ -11,7 +11,7 @@
 
 
 
-<title>Data Wrangling</title>
+<title>Data-Acquise.utf8</title>
 
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -325,74 +325,188 @@ $(document).ready(function () {
 
 
 
-<h1 class="title toc-ignore">Data Wrangling</h1>
-<h4 class="date">Nov 5, 2020</h4>
 
 </div>
 
 
-<div id="example" class="section level1">
-<h1>Example</h1>
-<p>To explore the basic data manipulation verbs of the package <code>dplyr</code>, we’ll use the datasets <code>mtcars</code> (comes with RStudio). The data was extracted from the 1974 Motor Trend US magazine, and comprises fuel consumption and 10 aspects of automobile design and performance for 32 automobiles (1973–74 models). The data is documented in <code>?mtcars</code>.</p>
-<p>The following code chunks will only print something, if you’ve installed the package <code>dplyr</code>. That is why everything is wrapped in a <code>if</code> condition.</p>
-<p>To do so, run:</p>
-<pre class="r"><code>install.packages(&quot;dplyr&quot;)</code></pre>
-<pre class="r"><code>if (&quot;dplyr&quot; %in% rownames(installed.packages())) {
+<div id="my-second-assignmend-data-aquisition" class="section level1">
+<h1>My second Assignmend – DATA AQUISITION</h1>
+<div id="api-challenge-1" class="section level2">
+<h2>API (Challenge 1)</h2>
+</div>
+<div id="web-scraping-challenge-2" class="section level2">
+<h2>Web Scraping (Challenge 2)</h2>
+<p>Last compiled: 2020-12-06</p>
+<p>The following data are scraped from <a href="https://www.radon-bikes.de">Radon Bikes</a> (Last Update: 20/12/01)</p>
+<div id="result" class="section level3">
+<h3>Result</h3>
+<p>The bike manufacturer has the following product families</p>
+<pre class="r"><code>bike_family_tbl &lt;- readRDS(&quot;data/bike_family_tbl.rds&quot;)
 
-  # Load libraries
-  library(dplyr)
+bike_family_tbl</code></pre>
+<pre><code>## # A tibble: 4 x 2
+##   position family_class    
+##      &lt;int&gt; &lt;chr&gt;           
+## 1        1 mountainbike    
+## 2        2 trekking &amp; cross
+## 3        3 e-bike          
+## 4        4 roadbike</code></pre>
+<p><span class="math inline">\(~\)</span></p>
+<p>Each of them is on after another divided into two categories</p>
+<pre class="r"><code>bike_category_tbl &lt;- readRDS(&quot;data/bike_category_tbl.rds&quot;)
+
+bike_category_tbl</code></pre>
+<pre><code>## # A tibble: 8 x 2
+##   position categories    
+##      &lt;int&gt; &lt;chr&gt;         
+## 1        1 hardtail      
+## 2        2 fullsuspension
+## 3        3 trekking      
+## 4        4 cross         
+## 5        5 mountainbike  
+## 6        6 trekking      
+## 7        7 carbon        
+## 8        8 alu</code></pre>
+<p><span class="math inline">\(~\)</span></p>
+<p>Final merged data</p>
+<pre class="r"><code>families &lt;- readRDS(&quot;data_cleaned_compl_tabl.rds&quot;)
+
+families</code></pre>
+<pre><code>##    product.id       family category              model price_EUR
+## 1           1 mountainbike hardtail        JEALOUS 8.0      2599
+## 2           2 mountainbike hardtail        JEALOUS 9.0      2999
+## 3           3 mountainbike hardtail       JEALOUS 10.0      3999
+## 4           4 mountainbike hardtail    JEALOUS 10.0 EA      5299
+## 5           5 mountainbike hardtail       JEALOUS 10.0      3699
+## 6           6 mountainbike hardtail    JEALOUS 10.0 EA      3799
+## 7           8 mountainbike hardtail     JEALOUS AL 8.0       999
+## 8           9 mountainbike hardtail  JEALOUS AL 8.0 HD      1299
+## 9          10 mountainbike hardtail     JEALOUS AL 9.0      1499
+## 10         11 mountainbike hardtail    JEALOUS AL 10.0      1799
+## 11         12 mountainbike hardtail JEALOUS AL 10.0 SL      1999
+## 12         13 mountainbike hardtail        CRAGGER 7.0      1199
+## 13         14 mountainbike hardtail        CRAGGER 8.0      1799
+## 14         15 mountainbike hardtail        CRAGGER 8.0      1649
+## 15         16 mountainbike hardtail        ZR TEAM 7.0       799
+## 16         17 mountainbike hardtail        ZR TEAM 7.0       799
+## 17         18 mountainbike hardtail        ZR TEAM 8.0       899
+## 18         19 mountainbike hardtail        ZR TEAM 8.0       899
+## 19         20 mountainbike hardtail        ZR TEAM 6.0       699
+## 20         21 mountainbike hardtail        ZR TEAM 6.0       699
+## 21         22 mountainbike hardtail        ZR TEAM 7.0       699
+## 22         23 mountainbike hardtail        ZR TEAM 7.0       699
+## 23         24 mountainbike hardtail        ZR TEAM 8.0       849
+## 24         25 mountainbike hardtail        ZR TEAM 8.0       999
+## 25         26 mountainbike hardtail        ZR TEAM NX1       799
+## 26         27 mountainbike hardtail        ZR TEAM NX1       799
+## 27         28 mountainbike hardtail        ZR LADY 7.0       799
+## 28         29 mountainbike hardtail        ZR LADY 8.0       899
+## 29         30 mountainbike hardtail        ZR LADY 6.0       699
+## 30         31 mountainbike hardtail        ZR LADY 7.0       649
+## 31         32 mountainbike hardtail        ZR LADY 8.0       849</code></pre>
+<p><span class="math inline">\(~\)</span> <span class="math inline">\(~\)</span></p>
+</div>
+<div id="code" class="section level3">
+<h3>Code</h3>
+<p>The product structure was scraped as shown below</p>
+<pre class="r"><code># 2.0 COLLECT PRODUCT FAMILIES &amp; Categories ----
+
+# 2.1 Families
+
+url_home          &lt;- &quot;https://www.radon-bikes.de&quot;
+
+# Read in the HTML for the entire webpage
+html_home         &lt;- read_html(url_home)
+
+
+# Web scrape the for the families
+bike_family_tbl &lt;- html_home %&gt;%
   
-  # Print the dataframe
-  mtcars
-
-}</code></pre>
-<pre><code>##                      mpg cyl  disp  hp drat    wt  qsec vs am gear carb
-## Mazda RX4           21.0   6 160.0 110 3.90 2.620 16.46  0  1    4    4
-## Mazda RX4 Wag       21.0   6 160.0 110 3.90 2.875 17.02  0  1    4    4
-## Datsun 710          22.8   4 108.0  93 3.85 2.320 18.61  1  1    4    1
-## Hornet 4 Drive      21.4   6 258.0 110 3.08 3.215 19.44  1  0    3    1
-## Hornet Sportabout   18.7   8 360.0 175 3.15 3.440 17.02  0  0    3    2
-## Valiant             18.1   6 225.0 105 2.76 3.460 20.22  1  0    3    1
-## Duster 360          14.3   8 360.0 245 3.21 3.570 15.84  0  0    3    4
-## Merc 240D           24.4   4 146.7  62 3.69 3.190 20.00  1  0    4    2
-## Merc 230            22.8   4 140.8  95 3.92 3.150 22.90  1  0    4    2
-## Merc 280            19.2   6 167.6 123 3.92 3.440 18.30  1  0    4    4
-## Merc 280C           17.8   6 167.6 123 3.92 3.440 18.90  1  0    4    4
-## Merc 450SE          16.4   8 275.8 180 3.07 4.070 17.40  0  0    3    3
-## Merc 450SL          17.3   8 275.8 180 3.07 3.730 17.60  0  0    3    3
-## Merc 450SLC         15.2   8 275.8 180 3.07 3.780 18.00  0  0    3    3
-## Cadillac Fleetwood  10.4   8 472.0 205 2.93 5.250 17.98  0  0    3    4
-## Lincoln Continental 10.4   8 460.0 215 3.00 5.424 17.82  0  0    3    4
-## Chrysler Imperial   14.7   8 440.0 230 3.23 5.345 17.42  0  0    3    4
-## Fiat 128            32.4   4  78.7  66 4.08 2.200 19.47  1  1    4    1
-## Honda Civic         30.4   4  75.7  52 4.93 1.615 18.52  1  1    4    2
-## Toyota Corolla      33.9   4  71.1  65 4.22 1.835 19.90  1  1    4    1
-## Toyota Corona       21.5   4 120.1  97 3.70 2.465 20.01  1  0    3    1
-## Dodge Challenger    15.5   8 318.0 150 2.76 3.520 16.87  0  0    3    2
-## AMC Javelin         15.2   8 304.0 150 3.15 3.435 17.30  0  0    3    2
-## Camaro Z28          13.3   8 350.0 245 3.73 3.840 15.41  0  0    3    4
-## Pontiac Firebird    19.2   8 400.0 175 3.08 3.845 17.05  0  0    3    2
-## Fiat X1-9           27.3   4  79.0  66 4.08 1.935 18.90  1  1    4    1
-## Porsche 914-2       26.0   4 120.3  91 4.43 2.140 16.70  0  1    5    2
-## Lotus Europa        30.4   4  95.1 113 3.77 1.513 16.90  1  1    5    2
-## Ford Pantera L      15.8   8 351.0 264 4.22 3.170 14.50  0  1    5    4
-## Ferrari Dino        19.7   6 145.0 175 3.62 2.770 15.50  0  1    5    6
-## Maserati Bora       15.0   8 301.0 335 3.54 3.570 14.60  0  1    5    8
-## Volvo 142E          21.4   4 121.0 109 4.11 2.780 18.60  1  1    4    2</code></pre>
-<p><code>filter()</code> allows you to subset observations based on their values. The first argument is the name of the data frame. The second and subsequent arguments are the expressions that filter the data frame. For example, we can select all cars with 4 cylinders and more than 90 horsepower:</p>
-<pre class="r"><code>if (&quot;dplyr&quot; %in% rownames(installed.packages())) {
-
-  filter(mtcars, cyl == 4, hp &gt; 90)
+  html_nodes(css = &quot;.megamenu &gt; a&quot;) %&gt;%   # nodes
+  html_text() %&gt;%
+  tolower() %&gt;%                           # convert into lowercase
   
-}  </code></pre>
-<pre><code>##                mpg cyl  disp  hp drat    wt  qsec vs am gear carb
-## Datsun 710    22.8   4 108.0  93 3.85 2.320 18.61  1  1    4    1
-## Merc 230      22.8   4 140.8  95 3.92 3.150 22.90  1  0    4    2
-## Toyota Corona 21.5   4 120.1  97 3.70 2.465 20.01  1  0    3    1
-## Porsche 914-2 26.0   4 120.3  91 4.43 2.140 16.70  0  1    5    2
-## Lotus Europa  30.4   4  95.1 113 3.77 1.513 16.90  1  1    5    2
-## Volvo 142E    21.4   4 121.0 109 4.11 2.780 18.60  1  1    4    2</code></pre>
-<p>…</p>
+  # Convert vector to tibble
+  enframe(name = &quot;position&quot;, value = &quot;family_class&quot;)
+
+bike_family_tbl &lt;- bike_family_tbl[-5,]
+
+write_rds(bike_family_tbl, &quot;bike_family_tbl&quot;)
+
+
+# 2.2 Categories
+
+bike_category_tbl &lt;- html_home %&gt;%
+  
+  html_nodes(css = &quot;.megamenu__item&quot;) %&gt;%   # nodes
+  html_text() %&gt;%
+  tolower() %&gt;%                           # convert into lowercase
+
+  # Convert vector to tibble
+  enframe(name = &quot;position&quot;, value = &quot;categories&quot;)
+
+  # delete superfluous rows
+  bike_category_tbl &lt;- bike_category_tbl[-9:-10,]
+  
+
+write_rds(bike_category_tbl, &quot;bike_category_tbl&quot;)</code></pre>
+<p><span class="math inline">\(~\)</span></p>
+<p>The data of the bikes of the first category <code>hardtail</code> was scraped with</p>
+<pre class="r"><code># 3 COLLECT BIKE DATA ----
+library(tidyverse) # Main Package - Loads dplyr, purrr, etc.
+library(rvest)     # HTML Hacking &amp; Web Scraping
+library(stringi)   # character string/text processing
+
+url_category &lt;- &quot;https://www.radon-bikes.de/mountainbike/hardtail/bikegrid/&quot;
+html_category &lt;- read_html(url_category)
+
+
+# 3.1 Bike names  
+bike_names_tbl &lt;- html_category %&gt;%
+  
+  html_nodes(css = &quot;.a-heading--small&quot;) %&gt;%   # nodes
+  html_text() %&gt;%
+  str_extract(pattern = &quot;(?&lt;=\\s)[A-Z].*(?=\\n)&quot;) %&gt;%
+  na.omit() %&gt;%
+  
+  # Convert vector to tibble
+  enframe(name = &quot;product.id&quot;, value = &quot;model&quot;)
+  
+
+# 3.2 Prices
+bike_prices_tbl &lt;- html_category %&gt;%
+  
+  html_nodes(css = &quot;.m-bikegrid__price--active&quot;) %&gt;%   # nodes
+  html_text() %&gt;%
+  str_extract(pattern = &quot;\\d+&quot;) %&gt;%
+  na.omit() %&gt;%
+  
+
+# Convert vector to tibble
+  enframe(name = &quot;price.id&quot;, value = &quot;price_EUR&quot;)</code></pre>
+<p><span class="math inline">\(~\)</span></p>
+<p>The Data was cleaned and merged as shown below</p>
+<pre class="r"><code># MERGE DATA --------------------------------------------------------------
+
+data_tbl &lt;- left_join(bike_names_tbl,bike_prices_tbl, by = c(&quot;product.id&quot; = &quot;price.id&quot;))
+  
+# Cleaning
+data_cleaned_tbl &lt;- data_tbl %&gt;%
+  subset(!str_detect(model, &quot;Frameset&quot;)) %&gt;%
+  subset(!str_detect(model, &quot;NEW&quot;))
+
+# Add information and reorder
+data_cleaned_compl_tabl &lt;- data_cleaned_tbl %&gt;%
+  cbind(family = bike_family_tbl[[1,2]]) %&gt;%
+  cbind(category = bike_category_tbl[[1,2]]) %&gt;%
+  select(product.id, family, category, model, price_EUR)
+
+
+write_rds(data_cleaned_compl_tabl, &quot;data_cleaned_compl_tabl.rds&quot;)</code></pre>
+<p><span class="math inline">\(~\)</span> <span class="math inline">\(~\)</span></p>
+<hr />
+</div>
+</div>
 </div>
 
 
