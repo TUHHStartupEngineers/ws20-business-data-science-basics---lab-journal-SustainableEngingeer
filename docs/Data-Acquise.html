@@ -344,25 +344,29 @@ $(document).ready(function () {
 <pre class="r"><code>bike_family_tbl &lt;- readRDS(&quot;data/bike_family_tbl.rds&quot;)
 
 bike_family_tbl</code></pre>
-<pre><code>##   position     family_class
-## 1        1     mountainbike
+<pre><code>## # A tibble: 4 x 2
+##   position family_class    
+##      &lt;int&gt; &lt;chr&gt;           
+## 1        1 mountainbike    
 ## 2        2 trekking &amp; cross
-## 3        3           e-bike
-## 4        4         roadbike</code></pre>
+## 3        3 e-bike          
+## 4        4 roadbike</code></pre>
 <p><span class="math inline">\(~\)</span></p>
 <p>Each of them is on after another divided into two categories</p>
 <pre class="r"><code>bike_category_tbl &lt;- readRDS(&quot;data/bike_category_tbl.rds&quot;)
 
 bike_category_tbl</code></pre>
-<pre><code>##   position     categories
-## 1        1       hardtail
+<pre><code>## # A tibble: 8 x 2
+##   position categories    
+##      &lt;int&gt; &lt;chr&gt;         
+## 1        1 hardtail      
 ## 2        2 fullsuspension
-## 3        3       trekking
-## 4        4          cross
-## 5        5   mountainbike
-## 6        6       trekking
-## 7        7         carbon
-## 8        8            alu</code></pre>
+## 3        3 trekking      
+## 4        4 cross         
+## 5        5 mountainbike  
+## 6        6 trekking      
+## 7        7 carbon        
+## 8        8 alu</code></pre>
 <p><span class="math inline">\(~\)</span></p>
 <p>Final merged data</p>
 <pre class="r"><code>families &lt;- readRDS(&quot;data_cleaned_compl_tabl.rds&quot;)
