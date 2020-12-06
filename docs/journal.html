@@ -1,0 +1,1275 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Nils Stamm" />
+
+<meta name="date" content="2020-11-05" />
+
+<title>Journal (reproducible report)</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/anchor-sections-1.0/anchor-sections.css" rel="stylesheet" />
+<script src="site_libs/anchor-sections-1.0/anchor-sections.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">MyLabJournal</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="journal.html">Journal</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Class notes
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="dictionary.html">Dictionary</a>
+    </li>
+    <li>
+      <a href="data_wrangling.html">Data Wrangling</a>
+    </li>
+    <li>
+      <a href="ggplot_graphs.html">ggplot graphs</a>
+    </li>
+    <li>
+      <a href="machine_learning.html">machine learning</a>
+    </li>
+  </ul>
+</li>
+<li>
+  <a href="links.html">Links</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+<div class="btn-group pull-right">
+<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+</ul>
+</div>
+
+
+
+<h1 class="title toc-ignore">Journal (reproducible report)</h1>
+<h4 class="author">Nils Stamm</h4>
+<h4 class="date">2020-11-05</h4>
+
+</div>
+
+
+<div id="th-assignmend-data-visuaization" class="section level1">
+<h1><span class="header-section-number">1</span> 4th Assignmend – DATA VISUAIZATION</h1>
+<p><span class="math inline">\(~\)</span></p>
+<div id="line-plot-of-covid-19-cases-challenge-1" class="section level2">
+<h2><span class="header-section-number">1.1</span> Line plot of COVID-19 cases (Challenge 1)</h2>
+<div id="result" class="section level3">
+<h3><span class="header-section-number">1.1.1</span> Result</h3>
+<p>Time course of the cumulative COVID-19 cases in <em>France</em>, <em>Germany</em>, <em>Spain</em>, <em>UK</em> and the <em>US</em>.</p>
+<pre class="r"><code>cases_worldwide &lt;- readRDS(&quot;data/05-1_line-plot_cases-worldwide.rds&quot;)
+
+cases_worldwide</code></pre>
+<p><img src="journal_files/figure-html/unnamed-chunk-1-1.png" width="960" /> Comment: Somehow the x-axis labels are printed in German because of my system language. This seems to be a Windows issue. On Mac they are printed in English.</p>
+<p><span class="math inline">\(~\)</span></p>
+</div>
+<div id="code" class="section level3">
+<h3><span class="header-section-number">1.1.2</span> Code</h3>
+<pre class="r"><code># 1 DATA ACQUISITION ------------------------------------------------------
+
+# Load packages
+library(readr)
+
+url &lt;- &quot;https://opendata.ecdc.europa.eu/covid19/casedistribution/csv&quot;
+covid_data_dt &lt;- read_csv(url)
+
+
+# 2 DATA WRANGLING --------------------------------------------------------
+
+# Load packages
+library(tidyverse)
+library(lubridate)
+
+# --- --- --- for one Country --- --- ----
+
+# # Select appropriate columns
+# covid_cases &lt;- covid_data_dt %&gt;%
+#   select(c(1:5,&quot;countriesAndTerritories&quot;)) %&gt;%
+#   rename(&quot;country&quot; = &quot;countriesAndTerritories&quot;)
+#   
+# # filter for countries
+# covid_cases_countries &lt;- covid_cases %&gt;%
+#   filter(country %in% c(&quot;France&quot;)) #,&quot;Germany&quot;,&quot;Spain&quot;,&quot;United_Kingdom&quot;,&quot;United_States_of_America&quot;)) %&gt;%
+# 
+# # Cumulate Cases
+# covid_cumCases_countries &lt;- covid_cases_countries %&gt;%
+#   
+#   # add smart date column &amp; order
+#   mutate(date = str_glue(&quot;{year}-{month}-{day}&quot;) %&gt;% as.Date()) %&gt;%
+#   arrange(date) %&gt;%
+#   
+#   # Cumulate Cases
+#   mutate(cumCases = cumsum(cases))
+  
+  
+
+# --- --- --- for all Countries --- --- ----
+
+# Select appropriate columns
+covid_cases &lt;- covid_data_dt %&gt;%
+  select(c(1:5,&quot;countriesAndTerritories&quot;)) %&gt;%
+  rename(&quot;country&quot; = &quot;countriesAndTerritories&quot;)
+
+# filter for countries
+covid_cases_countries &lt;- covid_cases %&gt;%
+  filter(country %in% c(&quot;France&quot;,&quot;Germany&quot;,&quot;Spain&quot;,&quot;United_Kingdom&quot;,&quot;United_States_of_America&quot;))
+
+# Cumulate Cases
+covid_cumCases_countries &lt;- covid_cases_countries %&gt;%
+  
+  # add smart date column &amp; order
+  mutate(date = str_glue(&quot;{year}-{month}-{day}&quot;) %&gt;% as.Date()) %&gt;%
+  arrange(date) %&gt;%
+  
+  # Cumulate Cases
+  group_by(country) %&gt;%
+  mutate(cumCases = cumsum(cases)) %&gt;%
+  ungroup() %&gt;%
+
+  # Label text
+  mutate(cumCases_text = scales::dollar(cumCases, big.mark = &quot;.&quot;, 
+                                   decimal.mark = &quot;,&quot;, 
+                                   prefix = &quot;&quot;, 
+                                   suffix = &quot;&quot;))
+
+## Writing files
+# write_rds(covid_cumCases_countries, &quot;covid_cumCases_countries.rds&quot;)
+
+
+
+# 3 DATA VISUALIZATION --------------------------------------------------------------
+
+# Load packages
+library(ggthemes)
+library(ggrepel)
+library(ggplot2)
+
+# Scaling var
+ylab &lt;- c(5.0, 10.0, 15.0)
+
+# Canvas
+cases_worldwide &lt;- covid_cumCases_countries %&gt;%
+  ggplot(aes(date, cumCases, color = country)) + 
+  
+# Geometries
+  geom_line(size = 0.5, linetype = 1) +
+  geom_hline(yintercept = seq(0, 15e6, 2500000), colour=&quot;light grey&quot;) +     # horizontal net
+  geom_label_repel(aes(label = cumCases_text),
+                   data = covid_cumCases_countries %&gt;% filter(cumCases == max(cumCases)),
+                   show.legend = F,                                                        # no label legend
+                   color = &quot;white&quot;,
+                   hjust = 1.5,
+                   point.padding = 1e-06,                                                  # position label + line
+                   fill = RColorBrewer::brewer.pal(n = 5, name = &quot;Set1&quot;)[5]            # label background = line color
+                  ) +
+
+
+# Formatting  
+  
+scale_x_date(date_labels = &quot;%B&quot;, date_breaks = &quot;1 month&quot;) +
+  
+scale_y_continuous(labels = paste0(ylab, &quot;,0 M&quot;),breaks = 10^6 * ylab) +
+scale_color_brewer(palette = &quot;Set1&quot;) +                                # color categories
+  
+labs(
+  title = &quot;COVID-19 confirmend cases worldwide&quot;,
+  subtitle = &quot;As of 05/12/2020&quot;,
+  x = expression(bold(&quot;Year 2020&quot;)),
+  y = expression(bold(&quot;Cumulative Cases&quot;)),
+  color = &quot;Continent / Country&quot; # Legend text 
+    ) +
+  
+# Theme
+  theme_bw() +
+  theme(legend.position  = &quot;bottom&quot;, 
+        legend.direction = &quot;vertical&quot;,
+        axis.text.x = element_text(angle = 45, hjust = 1, vjust = 0.95),
+        panel.grid.minor = element_blank(),
+        panel.border = element_blank(),
+        panel.background = element_rect(fill = &quot;dark grey&quot;) 
+        ) +
+  guides(color=guide_legend(nrow=2, title.position = &quot;left&quot;))                 # two row legend
+
+
+
+# Writing files
+write_rds(cases_worldwide, &quot;line-plot_cases-worldwide.rds&quot;)</code></pre>
+<p><span class="math inline">\(~\)</span></p>
+</div>
+</div>
+<div id="worlwide-morality-rate-challenge-2" class="section level2">
+<h2><span class="header-section-number">1.2</span> Worlwide morality rate (Challenge 2)</h2>
+<div id="result-1" class="section level3">
+<h3><span class="header-section-number">1.2.1</span> Result</h3>
+<p>Visualization of the distribution of the mortality rate (deaths / population) over the world.</p>
+<p><img src="data/05-2_map-plot_morality-rate.png" /></p>
+<p><span class="math inline">\(~\)</span></p>
+</div>
+<div id="code-1" class="section level3">
+<h3><span class="header-section-number">1.2.2</span> Code</h3>
+<pre class="r"><code># 1 DATA AQUISITION -------------------------------------------------------
+
+library(readr)
+url &lt;- &quot;https://opendata.ecdc.europa.eu/covid19/casedistribution/csv&quot;
+covid_data_dt &lt;- read_csv(url)
+
+library(maps)
+world &lt;- map_data(&quot;world&quot;)
+
+
+# 2 DATA WRANGLING --------------------------------------------------------
+
+# Load packages
+library(tidyverse)
+library(lubridate)
+library(data.table)
+
+# Input arguments
+date_lvl &lt;- &quot;2020-12-05&quot;
+date_lvl &lt;- as.Date(date)
+
+
+# --- --- COVID DATA --- --- --- --- ---
+# Select appropriate columns
+covid_deaths &lt;- covid_data_dt %&gt;%
+  select(c(1:7,&quot;countriesAndTerritories&quot;, &quot;popData2019&quot;)) %&gt;%
+  rename(&quot;country&quot; = &quot;countriesAndTerritories&quot;)
+
+
+# Level of deaths &amp; mortality
+covid_mort_lvl &lt;- covid_deaths %&gt;%
+  
+  # add smart date column &amp; order
+  mutate(date = str_glue(&quot;{year}-{month}-{day}&quot;) %&gt;% as.Date()) %&gt;%
+  arrange(date) %&gt;%
+  
+  # equalize country designations
+  mutate(across(country, str_replace_all, &quot;_&quot;, &quot; &quot;)) %&gt;%
+  mutate(country = case_when(country == &quot;United Kingdom&quot; ~ &quot;UK&quot;,
+                             country == &quot;United States of America&quot; ~ &quot;USA&quot;,
+                             country == &quot;Czechia&quot; ~ &quot;Czech Republic&quot;,
+                             TRUE ~ country
+                             )
+         ) %&gt;%
+  
+  # Cumulate deaths
+  group_by(country) %&gt;%
+  mutate(deaths_overall = cumsum(deaths)) %&gt;%
+  ungroup() %&gt;%
+
+  # filter for desired level
+  filter(date == date_lvl) %&gt;%
+
+  # calculate mortality at level
+  mutate(mortality = deaths_overall / popData2019)
+
+
+# Project mortality on world 
+setDT(world)
+setDT(covid_mort_lvl)
+covid_mort_worlwide &lt;- merge(x = covid_mort_lvl,
+                              y = world, 
+                              by.x = &quot;country&quot;,
+                              by.y = &quot;region&quot;,
+                              all.x = FALSE,
+                              all.y = TRUE)
+setDF(covid_mort_lvl)
+  
+  
+
+# # Writing files
+# write_rds(covid_cumCases_countries, &quot;covid_cumCases_countries.rds&quot;)
+
+
+
+# 3 DATA VISUALIZATION --------------------------------------------------------------
+
+# Load packages
+library(ggplot2)
+library(scales)
+
+# Canvas
+morality_rate &lt;- ggplot() +
+
+# Geometries
+geom_map(data = covid_mort_worlwide,
+          map  = world, 
+          aes(map_id = country, x = long, y = lat, fill= mortality),
+          colour = RColorBrewer::brewer.pal(n = 9, name = &quot;Greys&quot;)[3],
+          size=0.25) +
+
+# Formatting
+scale_fill_gradient(low  = RColorBrewer::brewer.pal(n = 9, name = &quot;Reds&quot;)[7],
+                     high = &quot;black&quot;,
+                     labels = percent) +
+labs(title    = &quot;Confirmend COVID-19 deaths relative to the size of the population&quot;,
+      subtitle = &quot;More than 1.5 Million confirmend COVID-19 deaths worldwide&quot;,
+      caption  = str_glue(&quot;Date:  {covid_mort_lvl[[1,1]]}&quot;),
+      fill    = &quot;Mortality Rate&quot;
+    ) +
+
+  
+# Theme
+theme_minimal() +
+theme(axis.line=element_blank(),axis.text.x=element_blank(),
+      axis.text.y=element_blank(),axis.ticks=element_blank(),
+      axis.title.x=element_blank(),
+      axis.title.y=element_blank()
+  )
+    
+# Plot
+morality_rate
+
+
+
+# Writing files
+write_rds(morality_rate, &quot;map-plot_morality-rate.rds&quot;)</code></pre>
+<p><span class="math inline">\(~\)</span> <span class="math inline">\(~\)</span></p>
+<hr />
+<p><span class="math inline">\(~\)</span></p>
+</div>
+</div>
+</div>
+<div id="rd-assignmend-data-wrangling" class="section level1">
+<h1><span class="header-section-number">2</span> 3rd Assignmend – DATA WRANGLING</h1>
+<p><span class="math inline">\(~\)</span></p>
+<p>From now on: Teamwork with Philip Salmang</p>
+<div id="preparation-of-data" class="section level2">
+<h2><span class="header-section-number">2.1</span> Preparation of Data</h2>
+<p>In this step, all needded data was read into the variables <code>patent_tbl</code>,<code>patent_assignee_tbl</code>,<code>assignee_tbl</code> and <code>uspc_tbl</code>. The Data was wrangled in such a way, that not needed columns were deleted and new tables were created by merging the existings tables. The specific variables needed in the upcoming challenges are mentioned inside the code.</p>
+<pre class="r"><code>library(data.table)   # Extension of &#39;data.frame&#39; for fast manipulation of large Data 
+library(tidyverse)    # Main Package - Loads dplyr, purrr, etc.
+library(vroom)        # Read and Write Rectangular Text Data Quickly
+library(lubridate)
+
+# 1.0 Set up and defining columns that we are interested in ----
+# 1.0.1 for files that will be read
+col_types &lt;- list(
+  id = col_character(),
+  date = col_date(&quot;%Y-%m-%d&quot;),
+  num_claims = col_double())
+
+# 1.0.2 patent_assignee_col_types
+patent_assignee_col_types &lt;- list(patent_id = col_character(),   
+                                  assignee_id = col_character())
+
+# 1.0.3 assignee_col_types
+assignee_col_types &lt;- list(id = col_character(),
+                           type = col_character(),
+                           organization = col_character())
+
+# 1.0.4 uspc_tbl
+uspc_col_types &lt;- list(patent_id = col_character(), 
+                       mainclass_id = col_character() , 
+                       sequence = col_character())
+
+## 1.1 Reading data to create tables
+# 1.1.1 Creating patent_tbl
+patent_tbl &lt;- vroom(
+  file       = &quot;02_data_wrangling/patent.tsv&quot;, 
+  delim      = &quot;\t&quot;, 
+  col_types  = col_types,
+  na         = c(&quot;&quot;, &quot;NA&quot;, &quot;NULL&quot;)) 
+setDT(patent_tbl)
+
+# 1.1.2 Creating patent_assignee_tbl
+patent_assignee_tbl &lt;- vroom(
+  file       = &quot;02_data_wrangling/patent_assignee.tsv&quot;, 
+  delim      = &quot;\t&quot;, 
+  col_types  = patent_assignee_col_types,
+  na         = c(&quot;&quot;, &quot;NA&quot;, &quot;NULL&quot;))
+setDT(patent_assignee_tbl)
+# 1.1.3 Creating assignee_tbl
+assignee_tbl &lt;- vroom(
+  file       = &quot;02_data_wrangling/assignee.tsv&quot;, 
+  delim      = &quot;\t&quot;, 
+  col_types  = assignee_col_types,
+  na         = c(&quot;&quot;, &quot;NA&quot;, &quot;NULL&quot;))
+setDT(assignee_tbl)
+
+## 1.1.4 Creating uspc_tbl
+uspc_tbl &lt;- vroom(
+  file       = &quot;02_data_wrangling/uspc.tsv&quot;, 
+  delim      = &quot;\t&quot;, 
+  col_types  = uspc_col_types,
+  na         = c(&quot;&quot;, &quot;NA&quot;, &quot;NULL&quot;)) %&gt;%
+  # remove column sequence since it is not needed
+  subset(select = -sequence) 
+setDT(uspc_tbl)
+
+# make a uspc table with unique combos of patent_id and mainclass_id
+uspc_unique_tbl &lt;- uspc_tbl[, .(patent_id, mainclass_id)] %&gt;% unique()
+
+## 1.3 Merge necessary tables for extracting relevant data
+
+# 1.3.1 Merge patent_assignee_tbl and assignee_tbl
+
+patent_assignee_merge_dt &lt;- merge(x = assignee_tbl, y = patent_assignee_tbl,
+                                  by.x = &quot;id&quot;,
+                                  by.y = &quot;assignee_id&quot;)
+# 1.3.2 Merge patent_assignee_merge_dt and patent_tbl;
+# patent_dominance_dt used in Challenge 1 and 2 
+patent_dominance_dt &lt;- merge(x = patent_assignee_merge_dt, y = patent_tbl,
+                             by.x = &quot;patent_id&quot;,
+                             by.y = &quot;id&quot;,
+                             all.x = T, 
+                             all.y = F)
+
+# Change Date into year, month, day
+patent_dominance_dt &lt;- patent_dominance_dt[, .(patent_id, 
+                                               id,
+                                               type,
+                                               organization, 
+                                               year = year(date),
+                                               month = month(date),
+                                               day = day(date))]
+
+# 1.3.3 Merge patent_dominance_dt and uspc_tbl; 
+# patent_dominance_innovation_dt only used in Challenge 3
+
+patent_dominance_innovation_dt &lt;- merge(x = uspc_unique_tbl, 
+                                        y = patent_dominance_dt,
+                                        by = &quot;patent_id&quot;,
+                                        all.x = F, 
+                                        all.y = T)</code></pre>
+<p><span class="math inline">\(~\)</span></p>
+</div>
+<div id="patent-dominance-challenge-1" class="section level2">
+<h2><span class="header-section-number">2.2</span> Patent Dominance (Challenge 1)</h2>
+<pre class="r"><code>patent_dominance_US_dt &lt;- 
+  patent_dominance_dt[!is.na(organization)][         # remove any rows containing NA 
+    type %in% c(2,4,6,8,9),.N, by = organization     # Filter for US companies and count
+  ][,.(Nr_Patents = N, organization)][               # Rename N 
+    order(Nr_Patents, decreasing = TRUE)             # Order Nr_Patents decreasing order
+  ][1:10,]                                           # slice to get first 10 companies</code></pre>
+<p><span class="math inline">\(~\)</span></p>
+<p>What US company / corporation has the most patents? List of the 10 US companies with the most assigned/granted patents.</p>
+<pre class="r"><code>patent_dominance_US_dt &lt;- readRDS(&quot;data/patent_dominance_US_dt.rds&quot;)
+patent_dominance_US_dt</code></pre>
+<pre><code>##    Nr_Patents                                organization
+## 1        7547 International Business Machines Corporation
+## 2        3165                       Microsoft Corporation
+## 3        2668                                 Google Inc.
+## 4        2597                       QUALCOMM Incorporated
+## 5        2201                                  Apple Inc.
+## 6        1873                    General Electric Company
+## 7        1638   Hewlett-Packard Development Company, L.P.
+## 8        1625          AT&amp;T INTELLECTUAL PROPERTY I, L.P.
+## 9        1616                           Intel Corporation
+## 10       1533         GM Global Technology Operations LLC</code></pre>
+<p><span class="math inline">\(~\)</span></p>
+</div>
+<div id="recent-activity-challenge-2" class="section level2">
+<h2><span class="header-section-number">2.3</span> Recent activity (Challenge 2)</h2>
+<pre class="r"><code>patent_dominance_july_US_dt &lt;- 
+  patent_dominance_dt[
+    !is.na(organization)                             # remove any rows containing NA 
+  ][month == 7,.(id, type, organization)][           # Filter for month 7
+    type %in% c(2,4,6,8,9),.N, by = organization     # Filter for US companies and count 
+  ][,.(Nr_Patents = N, organization)][               # Rename N 
+    order(Nr_Patents,decreasing = TRUE)              # Order Nr_Patents decreasing order
+  ][1:10,]                                           # slice to get first 10 companies</code></pre>
+<p><span class="math inline">\(~\)</span></p>
+<p>What US company had the most patents granted in 2019? Top 10 companies with the most new granted patents for 2019.</p>
+<pre class="r"><code>patent_dominance_US_dt &lt;- readRDS(&quot;data/patent_dominance_july_US_dt.rds&quot;)
+patent_dominance_US_dt</code></pre>
+<pre><code>##    Nr_Patents                                organization
+## 1         772 International Business Machines Corporation
+## 2         315                       Microsoft Corporation
+## 3         278                       QUALCOMM Incorporated
+## 4         254                                 Google Inc.
+## 5         219                                  Apple Inc.
+## 6         187                    General Electric Company
+## 7         176   Hewlett-Packard Development Company, L.P.
+## 8         172                           Intel Corporation
+## 9         153          AT&amp;T INTELLECTUAL PROPERTY I, L.P.
+## 10        145         GM Global Technology Operations LLC</code></pre>
+<p><span class="math inline">\(~\)</span></p>
+</div>
+<div id="most-innovative-main-classes-challenge-3" class="section level2">
+<h2><span class="header-section-number">2.4</span> Most Innovative Main Classes (Challenge 3)</h2>
+<pre class="r"><code>patent_dominance_world_dt &lt;- 
+  patent_dominance_dt[!is.na(organization)][         # remove any rows containing NA 
+    ,.N, by = organization                           # Count the amount of patents for each company
+  ][,.(Nr_Patents = N, organization)][               # Rename N 
+    order(Nr_Patents,decreasing = TRUE)              # Order Nr_Patents decreasing order
+  ][1:10,]                                           # slice to get first 10 companies
+
+# 4.2 Extracting Top 5 mainclass_id of Top 10 Organizations with
+# patent_dominance_innovation_dt
+top_mainclass &lt;- merge(x = patent_dominance_world_dt,
+                       y = patent_dominance_innovation_dt,
+                       by = &quot;organization&quot;) %&gt;%   
+  # Remove unnecessary columns
+  subset(select = -c(id, type, year, month, day, Nr_Patents)) 
+
+# Extracting Top 5 mainclasses out of top_mainclass
+top_5_mainclass &lt;- 
+  top_mainclass[!is.na(mainclass_id)][               # remove any rows containing NA 
+    ,.N, by = mainclass_id                           # Count the amount of each mainclass_id
+  ][,
+    .(Nr_mainclass = N, mainclass_id)][              # Rename N 
+      order(Nr_mainclass, decreasing = TRUE)         # Order Nr_mainclass decreasing order
+    ][1:5,]                                          # slice to get first 5 mainclass_id</code></pre>
+<p><span class="math inline">\(~\)</span></p>
+<p>What is the most innovative tech sector? The top 5 USPTO tech main classes for the top 10 companies (worldwide) with the most patents are:</p>
+<pre class="r"><code>patent_dominance_US_dt &lt;- readRDS(&quot;data/top_5_mainclass.rds&quot;)
+patent_dominance_US_dt</code></pre>
+<pre><code>##   Nr_mainclass mainclass_id
+## 1         2790          257
+## 2         2528          370
+## 3         2453          455
+## 4         1981          709
+## 5         1875          348</code></pre>
+<p><span class="math inline">\(~\)</span> <span class="math inline">\(~\)</span></p>
+<hr />
+</div>
+</div>
+<div id="nd-assignmend-data-aquisition" class="section level1">
+<h1><span class="header-section-number">3</span> 2nd Assignmend – DATA AQUISITION</h1>
+<div id="api-challenge-1" class="section level2">
+<h2><span class="header-section-number">3.1</span> API (Challenge 1)</h2>
+<div id="result-2" class="section level3">
+<h3><span class="header-section-number">3.1.1</span> Result</h3>
+<p>The following data are downloaded from <a href="https://football98.p.rapidapi.com/liga/scorers">football98</a>-API (Last Update: 20/12/06). It contains information about all football players from Italian football <em>Serie A</em>.</p>
+<pre class="r"><code>serie_a_players &lt;- readRDS(&quot;data/03-1_serie-a-players.rds&quot;)
+
+serie_a_players</code></pre>
+<pre><code>##    player_position     player_name       player_squad player_role player_goals
+## 1                1    M. Oyarzabal      Real Sociedad     Striker            6
+## 2                2   P. AlcÃƒÂ¡cer         Villarreal     Striker            5
+## 3                3        I. Aspas         Celta Vigo     Striker            5
+## 4                4       G. Moreno         Villarreal     Striker            5
+## 5                5     J. FÃƒÂ©lix AtlÃƒÂ©tico Madrid     Striker            5
+## 6                6    L. SuÃƒÂ¡rez AtlÃƒÂ©tico Madrid     Striker            5
+## 7                7      K. Benzema        Real Madrid     Striker            4
+## 8                8         A. Fati         Barcellona     Striker            4
+## 9                9 J. Luis Morales            Levante  Midfielder            4
+## 10              10           Portu      Real Sociedad     Striker            4
+##    player_penalties
+## 1                 4
+## 2                 1
+## 3                 1
+## 4                 3
+## 5                 1
+## 6                 0
+## 7                 0
+## 8                 0
+## 9                 0
+## 10                0</code></pre>
+<p>Comment: Here seems to be an issue with special characters from rmarkdown to html. So far I did not find a solution.</p>
+<p><span class="math inline">\(~\)</span></p>
+</div>
+<div id="code-2" class="section level3">
+<h3><span class="header-section-number">3.1.2</span> Code</h3>
+<pre class="r"><code># API ----
+
+# Load packages
+library(httr)
+library(tidyverse)
+library(jsonlite)
+
+# request data via API
+url &lt;- &quot;https://football98.p.rapidapi.com/liga/scorers&quot;
+
+# Process data from API
+response &lt;- VERB(&quot;GET&quot;, url, add_headers(&quot;X-RapidAPI-Key&quot;= &#39;39a799b910msha3a1393a9c2d30bp1fbef4jsne313ffa56616&#39;, &quot;X-RapidAPI-Host&quot; = &#39;football98.p.rapidapi.com&#39;, &#39;&#39;), content_type(&quot;application/octet-stream&quot;))
+
+content(response, &quot;text&quot;)
+serie_a_players &lt;- rawToChar(response$content) %&gt;% fromJSON()
+
+
+# writing files
+#write_rds(serie_a_players, &quot;serie_a_players.rds&quot;)
+
+serie_a_players_sl &lt;- serie_a_players %&gt;%
+  slice(1:10)
+
+write_rds(serie_a_players_sl, &quot;serie_a_players.rds&quot;)</code></pre>
+</div>
+</div>
+<div id="web-scraping-challenge-2" class="section level2">
+<h2><span class="header-section-number">3.2</span> Web Scraping (Challenge 2)</h2>
+<p>Last compiled: 2020-12-06</p>
+<p>The following data are scraped from <a href="https://www.radon-bikes.de">Radon Bikes</a> (Last Update: 20/12/01)</p>
+<div id="result-3" class="section level3">
+<h3><span class="header-section-number">3.2.1</span> Result</h3>
+<p>The bike manufacturer has the following <em>product families</em></p>
+<pre class="r"><code>bike_family_tbl &lt;- readRDS(&quot;data/bike_family_tbl.rds&quot;)
+
+bike_family_tbl</code></pre>
+<pre><code>## # A tibble: 4 x 2
+##   position family_class    
+##      &lt;int&gt; &lt;chr&gt;           
+## 1        1 mountainbike    
+## 2        2 trekking &amp; cross
+## 3        3 e-bike          
+## 4        4 roadbike</code></pre>
+<p><span class="math inline">\(~\)</span></p>
+<p>Each of them is on after another divided into two <em>product categories</em></p>
+<pre class="r"><code>bike_category_tbl &lt;- readRDS(&quot;data/bike_category_tbl.rds&quot;)
+
+bike_category_tbl</code></pre>
+<pre><code>## # A tibble: 8 x 2
+##   position categories    
+##      &lt;int&gt; &lt;chr&gt;         
+## 1        1 hardtail      
+## 2        2 fullsuspension
+## 3        3 trekking      
+## 4        4 cross         
+## 5        5 mountainbike  
+## 6        6 trekking      
+## 7        7 carbon        
+## 8        8 alu</code></pre>
+<p><span class="math inline">\(~\)</span></p>
+<p>Final merged data</p>
+<pre class="r"><code>families &lt;- readRDS(&quot;data_cleaned_compl_tabl.rds&quot;)
+
+families</code></pre>
+<pre><code>##    product.id       family category              model price_EUR
+## 1           1 mountainbike hardtail        JEALOUS 8.0      2599
+## 2           2 mountainbike hardtail        JEALOUS 9.0      2999
+## 3           3 mountainbike hardtail       JEALOUS 10.0      3999
+## 4           4 mountainbike hardtail    JEALOUS 10.0 EA      5299
+## 5           5 mountainbike hardtail       JEALOUS 10.0      3699
+## 6           6 mountainbike hardtail    JEALOUS 10.0 EA      3799
+## 7           8 mountainbike hardtail     JEALOUS AL 8.0       999
+## 8           9 mountainbike hardtail  JEALOUS AL 8.0 HD      1299
+## 9          10 mountainbike hardtail     JEALOUS AL 9.0      1499
+## 10         11 mountainbike hardtail    JEALOUS AL 10.0      1799
+## 11         12 mountainbike hardtail JEALOUS AL 10.0 SL      1999
+## 12         13 mountainbike hardtail        CRAGGER 7.0      1199
+## 13         14 mountainbike hardtail        CRAGGER 8.0      1799
+## 14         15 mountainbike hardtail        CRAGGER 8.0      1649
+## 15         16 mountainbike hardtail        ZR TEAM 7.0       799
+## 16         17 mountainbike hardtail        ZR TEAM 7.0       799
+## 17         18 mountainbike hardtail        ZR TEAM 8.0       899
+## 18         19 mountainbike hardtail        ZR TEAM 8.0       899
+## 19         20 mountainbike hardtail        ZR TEAM 6.0       699
+## 20         21 mountainbike hardtail        ZR TEAM 6.0       699
+## 21         22 mountainbike hardtail        ZR TEAM 7.0       699
+## 22         23 mountainbike hardtail        ZR TEAM 7.0       699
+## 23         24 mountainbike hardtail        ZR TEAM 8.0       849
+## 24         25 mountainbike hardtail        ZR TEAM 8.0       999
+## 25         26 mountainbike hardtail        ZR TEAM NX1       799
+## 26         27 mountainbike hardtail        ZR TEAM NX1       799
+## 27         28 mountainbike hardtail        ZR LADY 7.0       799
+## 28         29 mountainbike hardtail        ZR LADY 8.0       899
+## 29         30 mountainbike hardtail        ZR LADY 6.0       699
+## 30         31 mountainbike hardtail        ZR LADY 7.0       649
+## 31         32 mountainbike hardtail        ZR LADY 8.0       849</code></pre>
+<p><span class="math inline">\(~\)</span></p>
+</div>
+<div id="code-3" class="section level3">
+<h3><span class="header-section-number">3.2.2</span> Code</h3>
+<p>The product structure was scraped as shown below</p>
+<pre class="r"><code># 2.0 COLLECT PRODUCT FAMILIES &amp; Categories ----
+
+# 2.1 Families
+
+url_home          &lt;- &quot;https://www.radon-bikes.de&quot;
+
+# Read in the HTML for the entire webpage
+html_home         &lt;- read_html(url_home)
+
+
+# Web scrape the for the families
+bike_family_tbl &lt;- html_home %&gt;%
+  
+  html_nodes(css = &quot;.megamenu &gt; a&quot;) %&gt;%   # nodes
+  html_text() %&gt;%
+  tolower() %&gt;%                           # convert into lowercase
+  
+  # Convert vector to tibble
+  enframe(name = &quot;position&quot;, value = &quot;family_class&quot;)
+
+bike_family_tbl &lt;- bike_family_tbl[-5,]
+
+write_rds(bike_family_tbl, &quot;bike_family_tbl&quot;)
+
+
+# 2.2 Categories
+
+bike_category_tbl &lt;- html_home %&gt;%
+  
+  html_nodes(css = &quot;.megamenu__item&quot;) %&gt;%   # nodes
+  html_text() %&gt;%
+  tolower() %&gt;%                           # convert into lowercase
+
+  # Convert vector to tibble
+  enframe(name = &quot;position&quot;, value = &quot;categories&quot;)
+
+  # delete superfluous rows
+  bike_category_tbl &lt;- bike_category_tbl[-9:-10,]
+  
+
+write_rds(bike_category_tbl, &quot;bike_category_tbl&quot;)</code></pre>
+<p><span class="math inline">\(~\)</span></p>
+<p>The data of the bikes of the first category <code>hardtail</code> was scraped with</p>
+<pre class="r"><code># 3 COLLECT BIKE DATA ----
+library(tidyverse) # Main Package - Loads dplyr, purrr, etc.
+library(rvest)     # HTML Hacking &amp; Web Scraping
+library(stringi)   # character string/text processing
+
+url_category &lt;- &quot;https://www.radon-bikes.de/mountainbike/hardtail/bikegrid/&quot;
+html_category &lt;- read_html(url_category)
+
+
+# 3.1 Bike names  
+bike_names_tbl &lt;- html_category %&gt;%
+  
+  html_nodes(css = &quot;.a-heading--small&quot;) %&gt;%   # nodes
+  html_text() %&gt;%
+  str_extract(pattern = &quot;(?&lt;=\\s)[A-Z].*(?=\\n)&quot;) %&gt;%
+  na.omit() %&gt;%
+  
+  # Convert vector to tibble
+  enframe(name = &quot;product.id&quot;, value = &quot;model&quot;)
+  
+
+# 3.2 Prices
+bike_prices_tbl &lt;- html_category %&gt;%
+  
+  html_nodes(css = &quot;.m-bikegrid__price--active&quot;) %&gt;%   # nodes
+  html_text() %&gt;%
+  str_extract(pattern = &quot;\\d+&quot;) %&gt;%
+  na.omit() %&gt;%
+  
+
+# Convert vector to tibble
+  enframe(name = &quot;price.id&quot;, value = &quot;price_EUR&quot;)</code></pre>
+<p><span class="math inline">\(~\)</span></p>
+<p>The Data was cleaned and merged as shown below</p>
+<pre class="r"><code># MERGE DATA --------------------------------------------------------------
+
+data_tbl &lt;- left_join(bike_names_tbl,bike_prices_tbl, by = c(&quot;product.id&quot; = &quot;price.id&quot;))
+  
+# Cleaning
+data_cleaned_tbl &lt;- data_tbl %&gt;%
+  subset(!str_detect(model, &quot;Frameset&quot;)) %&gt;%
+  subset(!str_detect(model, &quot;NEW&quot;))
+
+# Add information and reorder
+data_cleaned_compl_tabl &lt;- data_cleaned_tbl %&gt;%
+  cbind(family = bike_family_tbl[[1,2]]) %&gt;%
+  cbind(category = bike_category_tbl[[1,2]]) %&gt;%
+  select(product.id, family, category, model, price_EUR)
+
+
+write_rds(data_cleaned_compl_tabl, &quot;data_cleaned_compl_tabl.rds&quot;)</code></pre>
+<p><span class="math inline">\(~\)</span> <span class="math inline">\(~\)</span></p>
+<hr />
+<p><span class="math inline">\(~\)</span></p>
+</div>
+</div>
+</div>
+<div id="st-assignmend-intro-to-tidyverse" class="section level1">
+<h1><span class="header-section-number">4</span> 1st Assignmend – INTRO TO TIDYVERSE</h1>
+<p>Last compiled: 2020-12-06</p>
+<div id="revenue-analysis-by-state-challenge-1.1" class="section level2">
+<h2><span class="header-section-number">4.1</span> Revenue analysis by state (Challenge 1.1)</h2>
+<p>As shown in the bar plot, North Rhine-Westphalia has by far the highest revenue</p>
+<pre class="r"><code>  library(tidyverse)
+  
+  sales_by_state_tbl &lt;- readRDS(&quot;data/sales_by_state_tbl.rds&quot;)
+
+  library(ggrepel)
+  sales_by_state_tbl %&gt;%
+  ggplot(aes(x = location_state, y = sales)) +
+    
+  geom_col(fill = &quot;#2DC6D6&quot;) + # Use geom_col for a bar plot
+  geom_label_repel(aes(label = sales_text)) + # Adding labels to the bars
+  
+  scale_y_continuous(labels = scales::dollar_format(big.mark = &quot;.&quot;, 
+                                                      decimal.mark = &quot;,&quot;, 
+                                                      prefix = &quot;&quot;, 
+                                                      suffix = &quot; €&quot;)) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+    
+  labs(
+      title    = &quot;Revenue by state&quot;,
+      subtitle = &quot;in Germany&quot;,
+      x = &quot;State&quot;, # Override defaults for x and y
+      y = &quot;Revenue&quot;)</code></pre>
+<p><img src="journal_files/figure-html/unnamed-chunk-19-1.png" width="960" /></p>
+<p><span class="math inline">\(~\)</span></p>
+</div>
+<div id="revenue-analysis-over-years-per-state-challenge-1.2" class="section level2">
+<h2><span class="header-section-number">4.2</span> Revenue analysis over years per state (Challenge 1.2)</h2>
+<pre class="r"><code>  sales_by_year_state_tbl &lt;- readRDS(&quot;data/sales_by_year_state_tbl.rds&quot;)  
+
+  sales_by_year_state_tbl %&gt;%
+  ggplot(aes(x = year, y = sales, fill = location_state)) +
+    
+  geom_col() + # Run up to here to get a stacked bar plot
+  geom_smooth(method = &quot;lm&quot;, se = FALSE) + # Adding a trendline
+    
+  facet_wrap(~ location_state) +
+    
+  scale_y_continuous(labels = scales::dollar_format(big.mark = &quot;.&quot;, 
+                                                      decimal.mark = &quot;,&quot;, 
+                                                      prefix = &quot;&quot;, 
+                                                      suffix = &quot; €&quot;)) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+    
+  labs(
+      title = &quot;Revenue by year and state&quot;,
+      subtitle = &quot;in Germany&quot;,
+      fill = &quot;State&quot;) # Changes the legend name</code></pre>
+<p><img src="journal_files/figure-html/unnamed-chunk-20-1.png" width="960" /></p>
+</div>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("hide" === "show");
+});
+</script>
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
