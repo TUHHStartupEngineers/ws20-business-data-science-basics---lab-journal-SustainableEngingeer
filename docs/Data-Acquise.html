@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Data-Acquise.utf8</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/anchor-sections-1.0/anchor-sections.css" rel="stylesheet" />
+<script src="site_libs/anchor-sections-1.0/anchor-sections.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">MyLabJournal</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="journal.html">Journal</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Class notes
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="dictionary.html">Dictionary</a>
+    </li>
+    <li>
+      <a href="data_wrangling.html">Data Wrangling</a>
+    </li>
+    <li>
+      <a href="ggplot_graphs.html">ggplot graphs</a>
+    </li>
+    <li>
+      <a href="machine_learning.html">machine learning</a>
+    </li>
+  </ul>
+</li>
+<li>
+  <a href="links.html">Links</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+
+</div>
+
+
+<div id="my-second-assignmend-data-aquisition" class="section level1">
+<h1>My second Assignmend – DATA AQUISITION</h1>
+<div id="api-challenge-1" class="section level2">
+<h2>API (Challenge 1)</h2>
+</div>
+<div id="web-scraping-challenge-2" class="section level2">
+<h2>Web Scraping (Challenge 2)</h2>
+<p>Last compiled: 2020-12-06</p>
+<p>The following data are scraped from <a href="https://www.radon-bikes.de">Radon Bikes</a> (Last Update: 20/12/01)</p>
+<div id="result" class="section level3">
+<h3>Result</h3>
+<p>The bike manufacturer has the following product families</p>
+<pre class="r"><code>bike_family_tbl &lt;- readRDS(&quot;data/bike_family_tbl.rds&quot;)
+
+bike_family_tbl</code></pre>
+<pre><code>##   position     family_class
+## 1        1     mountainbike
+## 2        2 trekking &amp; cross
+## 3        3           e-bike
+## 4        4         roadbike</code></pre>
+<p><span class="math inline">\(~\)</span></p>
+<p>Each of them is on after another divided into two categories</p>
+<pre class="r"><code>bike_category_tbl &lt;- readRDS(&quot;data/bike_category_tbl.rds&quot;)
+
+bike_category_tbl</code></pre>
+<pre><code>##   position     categories
+## 1        1       hardtail
+## 2        2 fullsuspension
+## 3        3       trekking
+## 4        4          cross
+## 5        5   mountainbike
+## 6        6       trekking
+## 7        7         carbon
+## 8        8            alu</code></pre>
+<p><span class="math inline">\(~\)</span></p>
+<p>Final merged data</p>
+<pre class="r"><code>families &lt;- readRDS(&quot;data_cleaned_compl_tabl.rds&quot;)
+
+families</code></pre>
+<pre><code>##    product.id       family category              model price_EUR
+## 1           1 mountainbike hardtail        JEALOUS 8.0      2599
+## 2           2 mountainbike hardtail        JEALOUS 9.0      2999
+## 3           3 mountainbike hardtail       JEALOUS 10.0      3999
+## 4           4 mountainbike hardtail    JEALOUS 10.0 EA      5299
+## 5           5 mountainbike hardtail       JEALOUS 10.0      3699
+## 6           6 mountainbike hardtail    JEALOUS 10.0 EA      3799
+## 7           8 mountainbike hardtail     JEALOUS AL 8.0       999
+## 8           9 mountainbike hardtail  JEALOUS AL 8.0 HD      1299
+## 9          10 mountainbike hardtail     JEALOUS AL 9.0      1499
+## 10         11 mountainbike hardtail    JEALOUS AL 10.0      1799
+## 11         12 mountainbike hardtail JEALOUS AL 10.0 SL      1999
+## 12         13 mountainbike hardtail        CRAGGER 7.0      1199
+## 13         14 mountainbike hardtail        CRAGGER 8.0      1799
+## 14         15 mountainbike hardtail        CRAGGER 8.0      1649
+## 15         16 mountainbike hardtail        ZR TEAM 7.0       799
+## 16         17 mountainbike hardtail        ZR TEAM 7.0       799
+## 17         18 mountainbike hardtail        ZR TEAM 8.0       899
+## 18         19 mountainbike hardtail        ZR TEAM 8.0       899
+## 19         20 mountainbike hardtail        ZR TEAM 6.0       699
+## 20         21 mountainbike hardtail        ZR TEAM 6.0       699
+## 21         22 mountainbike hardtail        ZR TEAM 7.0       699
+## 22         23 mountainbike hardtail        ZR TEAM 7.0       699
+## 23         24 mountainbike hardtail        ZR TEAM 8.0       849
+## 24         25 mountainbike hardtail        ZR TEAM 8.0       999
+## 25         26 mountainbike hardtail        ZR TEAM NX1       799
+## 26         27 mountainbike hardtail        ZR TEAM NX1       799
+## 27         28 mountainbike hardtail        ZR LADY 7.0       799
+## 28         29 mountainbike hardtail        ZR LADY 8.0       899
+## 29         30 mountainbike hardtail        ZR LADY 6.0       699
+## 30         31 mountainbike hardtail        ZR LADY 7.0       649
+## 31         32 mountainbike hardtail        ZR LADY 8.0       849</code></pre>
+<p><span class="math inline">\(~\)</span> <span class="math inline">\(~\)</span></p>
+</div>
+<div id="code" class="section level3">
+<h3>Code</h3>
+<p>The product structure was scraped as shown below</p>
+<pre class="r"><code># 2.0 COLLECT PRODUCT FAMILIES &amp; Categories ----
+
+# 2.1 Families
+
+url_home          &lt;- &quot;https://www.radon-bikes.de&quot;
+
+# Read in the HTML for the entire webpage
+html_home         &lt;- read_html(url_home)
+
+
+# Web scrape the for the families
+bike_family_tbl &lt;- html_home %&gt;%
+  
+  html_nodes(css = &quot;.megamenu &gt; a&quot;) %&gt;%   # nodes
+  html_text() %&gt;%
+  tolower() %&gt;%                           # convert into lowercase
+  
+  # Convert vector to tibble
+  enframe(name = &quot;position&quot;, value = &quot;family_class&quot;)
+
+bike_family_tbl &lt;- bike_family_tbl[-5,]
+
+write_rds(bike_family_tbl, &quot;bike_family_tbl&quot;)
+
+
+# 2.2 Categories
+
+bike_category_tbl &lt;- html_home %&gt;%
+  
+  html_nodes(css = &quot;.megamenu__item&quot;) %&gt;%   # nodes
+  html_text() %&gt;%
+  tolower() %&gt;%                           # convert into lowercase
+
+  # Convert vector to tibble
+  enframe(name = &quot;position&quot;, value = &quot;categories&quot;)
+
+  # delete superfluous rows
+  bike_category_tbl &lt;- bike_category_tbl[-9:-10,]
+  
+
+write_rds(bike_category_tbl, &quot;bike_category_tbl&quot;)</code></pre>
+<p><span class="math inline">\(~\)</span></p>
+<p>The data of the bikes of the first category <code>hardtail</code> was scraped with</p>
+<pre class="r"><code># 3 COLLECT BIKE DATA ----
+library(tidyverse) # Main Package - Loads dplyr, purrr, etc.
+library(rvest)     # HTML Hacking &amp; Web Scraping
+library(stringi)   # character string/text processing
+
+url_category &lt;- &quot;https://www.radon-bikes.de/mountainbike/hardtail/bikegrid/&quot;
+html_category &lt;- read_html(url_category)
+
+
+# 3.1 Bike names  
+bike_names_tbl &lt;- html_category %&gt;%
+  
+  html_nodes(css = &quot;.a-heading--small&quot;) %&gt;%   # nodes
+  html_text() %&gt;%
+  str_extract(pattern = &quot;(?&lt;=\\s)[A-Z].*(?=\\n)&quot;) %&gt;%
+  na.omit() %&gt;%
+  
+  # Convert vector to tibble
+  enframe(name = &quot;product.id&quot;, value = &quot;model&quot;)
+  
+
+# 3.2 Prices
+bike_prices_tbl &lt;- html_category %&gt;%
+  
+  html_nodes(css = &quot;.m-bikegrid__price--active&quot;) %&gt;%   # nodes
+  html_text() %&gt;%
+  str_extract(pattern = &quot;\\d+&quot;) %&gt;%
+  na.omit() %&gt;%
+  
+
+# Convert vector to tibble
+  enframe(name = &quot;price.id&quot;, value = &quot;price_EUR&quot;)</code></pre>
+<p><span class="math inline">\(~\)</span></p>
+<p>The Data was cleaned and merged as shown below</p>
+<pre class="r"><code># MERGE DATA --------------------------------------------------------------
+
+data_tbl &lt;- left_join(bike_names_tbl,bike_prices_tbl, by = c(&quot;product.id&quot; = &quot;price.id&quot;))
+  
+# Cleaning
+data_cleaned_tbl &lt;- data_tbl %&gt;%
+  subset(!str_detect(model, &quot;Frameset&quot;)) %&gt;%
+  subset(!str_detect(model, &quot;NEW&quot;))
+
+# Add information and reorder
+data_cleaned_compl_tabl &lt;- data_cleaned_tbl %&gt;%
+  cbind(family = bike_family_tbl[[1,2]]) %&gt;%
+  cbind(category = bike_category_tbl[[1,2]]) %&gt;%
+  select(product.id, family, category, model, price_EUR)
+
+
+write_rds(data_cleaned_compl_tabl, &quot;data_cleaned_compl_tabl.rds&quot;)</code></pre>
+<p><span class="math inline">\(~\)</span> <span class="math inline">\(~\)</span></p>
+<hr />
+</div>
+</div>
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

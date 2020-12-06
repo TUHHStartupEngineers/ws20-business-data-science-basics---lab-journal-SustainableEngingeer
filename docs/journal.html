@@ -423,12 +423,284 @@ div.tocify {
 
 
 <div id="my-fourth-assignmend-data-visuaization" class="section level1">
-<h1><span class="header-section-number">1</span> My fourth Assignmend – Data VISUAIZATION</h1>
-<div id="line-lpot-of-covid-19-cases-challenge-1" class="section level2">
-<h2><span class="header-section-number">1.1</span> LINE-LPOT OF COVID-19 CASES (Challenge 1)</h2>
+<h1><span class="header-section-number">1</span> My fourth Assignmend – DATA VISUAIZATION</h1>
+<p><span class="math inline">\(~\)</span></p>
+<div id="line-plot-of-covid-19-cases-challenge-1" class="section level2">
+<h2><span class="header-section-number">1.1</span> Line plot of COVID-19 cases (Challenge 1)</h2>
+<div id="result" class="section level3">
+<h3><span class="header-section-number">1.1.1</span> Result</h3>
+<p>Time course of the cumulative COVID-19 cases in France, Germany, Spain, UK and the US.</p>
+<pre class="r"><code>cases_worldwide &lt;- readRDS(&quot;data/05-1_line-plot_cases-worldwide.rds&quot;)
+
+cases_worldwide</code></pre>
+<p><img src="journal_files/figure-html/unnamed-chunk-1-1.png" width="672" /></p>
+<p><span class="math inline">\(~\)</span></p>
 </div>
-<div id="worldwide-distribution-of-martality-rate-challenge-2" class="section level2">
-<h2><span class="header-section-number">1.2</span> WORLDWIDE DISTRIBUTION OF MARTALITY RATE (Challenge 2)</h2>
+<div id="code" class="section level3">
+<h3><span class="header-section-number">1.1.2</span> Code</h3>
+<pre class="r"><code># 1 DATA ACQUISITION ------------------------------------------------------
+
+# Load packages
+library(readr)
+
+url &lt;- &quot;https://opendata.ecdc.europa.eu/covid19/casedistribution/csv&quot;
+covid_data_dt &lt;- read_csv(url)
+
+
+# 2 DATA WRANGLING --------------------------------------------------------
+
+# Load packages
+library(tidyverse)
+library(lubridate)
+
+# --- --- --- for one Country --- --- ----
+
+# # Select appropriate columns
+# covid_cases &lt;- covid_data_dt %&gt;%
+#   select(c(1:5,&quot;countriesAndTerritories&quot;)) %&gt;%
+#   rename(&quot;country&quot; = &quot;countriesAndTerritories&quot;)
+#   
+# # filter for countries
+# covid_cases_countries &lt;- covid_cases %&gt;%
+#   filter(country %in% c(&quot;France&quot;)) #,&quot;Germany&quot;,&quot;Spain&quot;,&quot;United_Kingdom&quot;,&quot;United_States_of_America&quot;)) %&gt;%
+# 
+# # Cumulate Cases
+# covid_cumCases_countries &lt;- covid_cases_countries %&gt;%
+#   
+#   # add smart date column &amp; order
+#   mutate(date = str_glue(&quot;{year}-{month}-{day}&quot;) %&gt;% as.Date()) %&gt;%
+#   arrange(date) %&gt;%
+#   
+#   # Cumulate Cases
+#   mutate(cumCases = cumsum(cases))
+  
+  
+
+# --- --- --- for all Countries --- --- ----
+
+# Select appropriate columns
+covid_cases &lt;- covid_data_dt %&gt;%
+  select(c(1:5,&quot;countriesAndTerritories&quot;)) %&gt;%
+  rename(&quot;country&quot; = &quot;countriesAndTerritories&quot;)
+
+# filter for countries
+covid_cases_countries &lt;- covid_cases %&gt;%
+  filter(country %in% c(&quot;France&quot;,&quot;Germany&quot;,&quot;Spain&quot;,&quot;United_Kingdom&quot;,&quot;United_States_of_America&quot;))
+
+# Cumulate Cases
+covid_cumCases_countries &lt;- covid_cases_countries %&gt;%
+  
+  # add smart date column &amp; order
+  mutate(date = str_glue(&quot;{year}-{month}-{day}&quot;) %&gt;% as.Date()) %&gt;%
+  arrange(date) %&gt;%
+  
+  # Cumulate Cases
+  group_by(country) %&gt;%
+  mutate(cumCases = cumsum(cases)) %&gt;%
+  ungroup() %&gt;%
+
+  # Label text
+  mutate(cumCases_text = scales::dollar(cumCases, big.mark = &quot;.&quot;, 
+                                   decimal.mark = &quot;,&quot;, 
+                                   prefix = &quot;&quot;, 
+                                   suffix = &quot;&quot;))
+
+## Writing files
+# write_rds(covid_cumCases_countries, &quot;covid_cumCases_countries.rds&quot;)
+
+
+
+# 3 DATA VISUALIZATION --------------------------------------------------------------
+
+# Load packages
+library(ggthemes)
+library(ggrepel)
+library(ggplot2)
+
+# Scaling var
+ylab &lt;- c(5.0, 10.0, 15.0)
+
+# Canvas
+cases_worldwide &lt;- covid_cumCases_countries %&gt;%
+  ggplot(aes(date, cumCases, color = country)) + 
+  
+# Geometries
+  geom_line(size = 0.5, linetype = 1) +
+  geom_hline(yintercept = seq(0, 15e6, 2500000), colour=&quot;light grey&quot;) +     # horizontal net
+  geom_label_repel(aes(label = cumCases_text),
+                   data = covid_cumCases_countries %&gt;% filter(cumCases == max(cumCases)),
+                   show.legend = F,                                                        # no label legend
+                   color = &quot;white&quot;,
+                   hjust = 1.5,
+                   point.padding = 1e-06,                                                  # position label + line
+                   fill = RColorBrewer::brewer.pal(n = 5, name = &quot;Set1&quot;)[5]            # label background = line color
+                  ) +
+
+
+# Formatting  
+  
+scale_x_date(date_labels = &quot;%B&quot;, date_breaks = &quot;1 month&quot;) +
+  
+scale_y_continuous(labels = paste0(ylab, &quot;,0 M&quot;),breaks = 10^6 * ylab) +
+scale_color_brewer(palette = &quot;Set1&quot;) +                                # color categories
+  
+labs(
+  title = &quot;COVID-19 confirmend cases worldwide&quot;,
+  subtitle = &quot;As of 05/12/2020&quot;,
+  x = expression(bold(&quot;Year 2020&quot;)),
+  y = expression(bold(&quot;Cumulative Cases&quot;)),
+  color = &quot;Continent / Country&quot; # Legend text 
+    ) +
+  
+# Theme
+  theme_bw() +
+  theme(legend.position  = &quot;bottom&quot;, 
+        legend.direction = &quot;vertical&quot;,
+        axis.text.x = element_text(angle = 45, hjust = 1, vjust = 0.95),
+        panel.grid.minor = element_blank(),
+        panel.border = element_blank(),
+        panel.background = element_rect(fill = &quot;dark grey&quot;) 
+        ) +
+  guides(color=guide_legend(nrow=2, title.position = &quot;left&quot;))                 # two row legend
+
+
+
+# Writing files
+write_rds(cases_worldwide, &quot;line-plot_cases-worldwide.rds&quot;)</code></pre>
+<p><span class="math inline">\(~\)</span></p>
+</div>
+</div>
+<div id="worlwide-morality-rate-challenge-2" class="section level2">
+<h2><span class="header-section-number">1.2</span> Worlwide morality rate (Challenge 2)</h2>
+<div id="result-1" class="section level3">
+<h3><span class="header-section-number">1.2.1</span> Result</h3>
+<p>Visualization of the distribution of the mortality rate (deaths / population) over the world.</p>
+<p><img src="data/05-2_map-plot_morality-rate.png" /></p>
+<p><span class="math inline">\(~\)</span></p>
+</div>
+<div id="code-1" class="section level3">
+<h3><span class="header-section-number">1.2.2</span> Code</h3>
+<pre class="r"><code># 1 DATA AQUISITION -------------------------------------------------------
+
+library(readr)
+url &lt;- &quot;https://opendata.ecdc.europa.eu/covid19/casedistribution/csv&quot;
+covid_data_dt &lt;- read_csv(url)
+
+library(maps)
+world &lt;- map_data(&quot;world&quot;)
+
+
+# 2 DATA WRANGLING --------------------------------------------------------
+
+# Load packages
+library(tidyverse)
+library(lubridate)
+library(data.table)
+
+# Input arguments
+date_lvl &lt;- &quot;2020-12-05&quot;
+date_lvl &lt;- as.Date(date)
+
+
+# --- --- COVID DATA --- --- --- --- ---
+# Select appropriate columns
+covid_deaths &lt;- covid_data_dt %&gt;%
+  select(c(1:7,&quot;countriesAndTerritories&quot;, &quot;popData2019&quot;)) %&gt;%
+  rename(&quot;country&quot; = &quot;countriesAndTerritories&quot;)
+
+
+# Level of deaths &amp; mortality
+covid_mort_lvl &lt;- covid_deaths %&gt;%
+  
+  # add smart date column &amp; order
+  mutate(date = str_glue(&quot;{year}-{month}-{day}&quot;) %&gt;% as.Date()) %&gt;%
+  arrange(date) %&gt;%
+  
+  # equalize country designations
+  mutate(across(country, str_replace_all, &quot;_&quot;, &quot; &quot;)) %&gt;%
+  mutate(country = case_when(country == &quot;United Kingdom&quot; ~ &quot;UK&quot;,
+                             country == &quot;United States of America&quot; ~ &quot;USA&quot;,
+                             country == &quot;Czechia&quot; ~ &quot;Czech Republic&quot;,
+                             TRUE ~ country
+                             )
+         ) %&gt;%
+  
+  # Cumulate deaths
+  group_by(country) %&gt;%
+  mutate(deaths_overall = cumsum(deaths)) %&gt;%
+  ungroup() %&gt;%
+
+  # filter for desired level
+  filter(date == date_lvl) %&gt;%
+
+  # calculate mortality at level
+  mutate(mortality = deaths_overall / popData2019)
+
+
+# Project mortality on world 
+setDT(world)
+setDT(covid_mort_lvl)
+covid_mort_worlwide &lt;- merge(x = covid_mort_lvl,
+                              y = world, 
+                              by.x = &quot;country&quot;,
+                              by.y = &quot;region&quot;,
+                              all.x = FALSE,
+                              all.y = TRUE)
+setDF(covid_mort_lvl)
+  
+  
+
+# # Writing files
+# write_rds(covid_cumCases_countries, &quot;covid_cumCases_countries.rds&quot;)
+
+
+
+# 3 DATA VISUALIZATION --------------------------------------------------------------
+
+# Load packages
+library(ggplot2)
+library(scales)
+
+# Canvas
+morality_rate &lt;- ggplot() +
+
+# Geometries
+geom_map(data = covid_mort_worlwide,
+          map  = world, 
+          aes(map_id = country, x = long, y = lat, fill= mortality),
+          colour = RColorBrewer::brewer.pal(n = 9, name = &quot;Greys&quot;)[3],
+          size=0.25) +
+
+# Formatting
+scale_fill_gradient(low  = RColorBrewer::brewer.pal(n = 9, name = &quot;Reds&quot;)[7],
+                     high = &quot;black&quot;,
+                     labels = percent) +
+labs(title    = &quot;Confirmend COVID-19 deaths relative to the size of the population&quot;,
+      subtitle = &quot;More than 1.5 Million confirmend COVID-19 deaths worldwide&quot;,
+      caption  = str_glue(&quot;Date:  {covid_mort_lvl[[1,1]]}&quot;),
+      fill    = &quot;Mortality Rate&quot;
+    ) +
+
+  
+# Theme
+theme_minimal() +
+theme(axis.line=element_blank(),axis.text.x=element_blank(),
+      axis.text.y=element_blank(),axis.ticks=element_blank(),
+      axis.title.x=element_blank(),
+      axis.title.y=element_blank()
+  )
+    
+# Plot
+morality_rate
+
+
+
+# Writing files
+write_rds(morality_rate, &quot;map-plot_morality-rate.rds&quot;)</code></pre>
+<p><span class="math inline">\(~\)</span> <span class="math inline">\(~\)</span></p>
+<hr />
+<p><span class="math inline">\(~\)</span></p>
+</div>
 </div>
 </div>
 <div id="my-third-assignmend-data-wrangling" class="section level1">
@@ -441,16 +713,16 @@ div.tocify {
 <hr />
 </div>
 </div>
-<div id="my-second-assignmend-data-acquisition" class="section level1">
-<h1><span class="header-section-number">3</span> My second Assignmend – Data Acquisition</h1>
+<div id="my-second-assignmend-data-aquisition" class="section level1">
+<h1><span class="header-section-number">3</span> My second Assignmend – DATA AQUISITION</h1>
 <div id="api-challenge-1" class="section level2">
 <h2><span class="header-section-number">3.1</span> API (Challenge 1)</h2>
 </div>
 <div id="web-scraping-challenge-2" class="section level2">
-<h2><span class="header-section-number">3.2</span> WEB SCRAPING (Challenge 2)</h2>
+<h2><span class="header-section-number">3.2</span> Web Scraping (Challenge 2)</h2>
 <p>Last compiled: 2020-12-06</p>
 <p>The following data are scraped from <a href="https://www.radon-bikes.de">Radon Bikes</a> (Last Update: 20/12/01)</p>
-<div id="result" class="section level3">
+<div id="result-2" class="section level3">
 <h3><span class="header-section-number">3.2.1</span> Result</h3>
 <p>The bike manufacturer has the following product families</p>
 <pre class="r"><code>bike_family_tbl &lt;- readRDS(&quot;data/bike_family_tbl.rds&quot;)
@@ -518,7 +790,7 @@ families</code></pre>
 ## 31         32 mountainbike hardtail        ZR LADY 8.0       849</code></pre>
 <p><span class="math inline">\(~\)</span> <span class="math inline">\(~\)</span></p>
 </div>
-<div id="code" class="section level3">
+<div id="code-2" class="section level3">
 <h3><span class="header-section-number">3.2.2</span> Code</h3>
 <p>The product structure was scraped as shown below</p>
 <pre class="r"><code># 2.0 COLLECT PRODUCT FAMILIES &amp; Categories ----
@@ -621,11 +893,12 @@ write_rds(data_cleaned_compl_tabl, &quot;data_cleaned_compl_tabl.rds&quot;)</cod
 </div>
 </div>
 </div>
-<div id="my-first-assignmend" class="section level1">
-<h1><span class="header-section-number">4</span> My first Assignmend</h1>
+<div id="my-first-assignmend-intro-to-tidyverse" class="section level1">
+<h1><span class="header-section-number">4</span> My first Assignmend – INTRO TO TIDYVERSE</h1>
 <p>Last compiled: 2020-12-06</p>
-<div id="revenue-analysis-by-state" class="section level2">
-<h2><span class="header-section-number">4.1</span> Revenue analysis by state</h2>
+<div id="revenue-analysis-by-state-challenge-1.1" class="section level2">
+<h2><span class="header-section-number">4.1</span> Revenue analysis by state (Challenge 1.1)</h2>
+<p>As shown in the bar plot, North Rhine-Westphalia has by far the highest revenue</p>
 <pre class="r"><code>  sales_by_state_tbl &lt;- readRDS(&quot;data/sales_by_state_tbl.rds&quot;)
 
   library(ggrepel)
@@ -646,7 +919,8 @@ write_rds(data_cleaned_compl_tabl, &quot;data_cleaned_compl_tabl.rds&quot;)</cod
       subtitle = &quot;in Germany&quot;,
       x = &quot;State&quot;, # Override defaults for x and y
       y = &quot;Revenue&quot;)</code></pre>
-<p><img src="journal_files/figure-html/unnamed-chunk-7-1.png" width="960" /></p>
+<p><img src="journal_files/figure-html/unnamed-chunk-10-1.png" width="960" /></p>
+<p><span class="math inline">\(~\)</span></p>
 </div>
 <div id="revenue-analysis-over-years-per-state" class="section level2">
 <h2><span class="header-section-number">4.2</span> Revenue analysis over years per state</h2>
@@ -670,7 +944,7 @@ write_rds(data_cleaned_compl_tabl, &quot;data_cleaned_compl_tabl.rds&quot;)</cod
       title = &quot;Revenue by year and state&quot;,
       subtitle = &quot;in Germany&quot;,
       fill = &quot;State&quot;) # Changes the legend name</code></pre>
-<p><img src="journal_files/figure-html/unnamed-chunk-8-1.png" width="960" /></p>
+<p><img src="journal_files/figure-html/unnamed-chunk-11-1.png" width="960" /></p>
 </div>
 </div>
 
