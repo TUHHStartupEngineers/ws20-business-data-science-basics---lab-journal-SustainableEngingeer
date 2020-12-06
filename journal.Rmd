@@ -16,15 +16,47 @@ output:
 knitr::opts_chunk$set(message=FALSE,warning=FALSE, cache=TRUE)
 ```
 
+# My fourth Assignmend -- Data VISUAIZATION
 
-# My second Assignmend -- Data Acquisition
+## LINE-LPOT OF COVID-19 CASES (Challenge 1)
 
-## WEB SCRAPING
+## WORLDWIDE DISTRIBUTION OF MARTALITY RATE (Challenge 2)
+
+
+
+
+
+
+# My third Assignmend -- Data Wrangling
+
+## PART 1
+
+## PART 2
+
+
+
+
+
+
+
+
+
+***
+
+# My second Assignmend -- DATA AQUISITION
+
+## API (Challenge 1)
+
+## Web Scraping (Challenge 2)
 
 Last compiled: `r Sys.Date()`
 
 The following data are scraped from
 [Radon Bikes](https://www.radon-bikes.de) (Last Update: 20/12/01)
+
+
+
+### Result
 
 The bike manufacturer has the following product families
 ```{r}
@@ -33,6 +65,8 @@ bike_family_tbl <- readRDS("data/bike_family_tbl.rds")
 bike_family_tbl
 ```
 
+$~$
+
 Each of them is on after another divided into two categories
 ```{r}
 bike_category_tbl <- readRDS("data/bike_category_tbl.rds")
@@ -40,9 +74,68 @@ bike_category_tbl <- readRDS("data/bike_category_tbl.rds")
 bike_category_tbl
 ```
 
+$~$
 
-The data of the first category `hardtail` was scraped with
+Final merged data 
+```{r}
+families <- readRDS("data_cleaned_compl_tabl.rds")
 
+families
+```
+
+$~$
+$~$
+
+### Code
+
+The product structure was scraped as shown below
+```{r eval=FALSE, echo=TRUE}
+# 2.0 COLLECT PRODUCT FAMILIES & Categories ----
+
+# 2.1 Families
+
+url_home          <- "https://www.radon-bikes.de"
+
+# Read in the HTML for the entire webpage
+html_home         <- read_html(url_home)
+
+
+# Web scrape the for the families
+bike_family_tbl <- html_home %>%
+  
+  html_nodes(css = ".megamenu > a") %>%   # nodes
+  html_text() %>%
+  tolower() %>%                           # convert into lowercase
+  
+  # Convert vector to tibble
+  enframe(name = "position", value = "family_class")
+
+bike_family_tbl <- bike_family_tbl[-5,]
+
+write_rds(bike_family_tbl, "bike_family_tbl")
+
+
+# 2.2 Categories
+
+bike_category_tbl <- html_home %>%
+  
+  html_nodes(css = ".megamenu__item") %>%   # nodes
+  html_text() %>%
+  tolower() %>%                           # convert into lowercase
+
+  # Convert vector to tibble
+  enframe(name = "position", value = "categories")
+
+  # delete superfluous rows
+  bike_category_tbl <- bike_category_tbl[-9:-10,]
+  
+
+write_rds(bike_category_tbl, "bike_category_tbl")
+```
+
+$~$
+
+The data of the bikes of the first category `hardtail` was scraped with
 ```{r eval=FALSE, echo=TRUE} 
 # 3 COLLECT BIKE DATA ----
 library(tidyverse) # Main Package - Loads dplyr, purrr, etc.
@@ -78,6 +171,7 @@ bike_prices_tbl <- html_category %>%
   enframe(name = "price.id", value = "price_EUR")
 ``` 
 
+$~$
 
 The Data was cleaned and merged as shown below
 
@@ -101,19 +195,17 @@ data_cleaned_compl_tabl <- data_cleaned_tbl %>%
 write_rds(data_cleaned_compl_tabl, "data_cleaned_compl_tabl.rds")
 ``` 
 
-### Result
-
-```{r}
-families <- readRDS("data_cleaned_compl_tabl.rds")
-
-families
-```
+$~$
+$~$
 
 
+***
+
+$~$
 
 
 
-# My first Assignmend
+# My first Assignmend -- Intro to tidyverse
 
 Last compiled: `r Sys.Date()`
 

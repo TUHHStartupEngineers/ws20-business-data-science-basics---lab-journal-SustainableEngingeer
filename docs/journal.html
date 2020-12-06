@@ -422,12 +422,36 @@ div.tocify {
 </div>
 
 
+<div id="my-fourth-assignmend-data-visuaization" class="section level1">
+<h1><span class="header-section-number">1</span> My fourth Assignmend – Data VISUAIZATION</h1>
+<div id="line-lpot-of-covid-19-cases-challenge-1" class="section level2">
+<h2><span class="header-section-number">1.1</span> LINE-LPOT OF COVID-19 CASES (Challenge 1)</h2>
+</div>
+<div id="worldwide-distribution-of-martality-rate-challenge-2" class="section level2">
+<h2><span class="header-section-number">1.2</span> WORLDWIDE DISTRIBUTION OF MARTALITY RATE (Challenge 2)</h2>
+</div>
+</div>
+<div id="my-third-assignmend-data-wrangling" class="section level1">
+<h1><span class="header-section-number">2</span> My third Assignmend – Data Wrangling</h1>
+<div id="part-1" class="section level2">
+<h2><span class="header-section-number">2.1</span> PART 1</h2>
+</div>
+<div id="part-2" class="section level2">
+<h2><span class="header-section-number">2.2</span> PART 2</h2>
+<hr />
+</div>
+</div>
 <div id="my-second-assignmend-data-acquisition" class="section level1">
-<h1><span class="header-section-number">1</span> My second Assignmend – Data Acquisition</h1>
-<div id="web-scraping" class="section level2">
-<h2><span class="header-section-number">1.1</span> WEB SCRAPING</h2>
-<p>Last compiled: 2020-12-02</p>
+<h1><span class="header-section-number">3</span> My second Assignmend – Data Acquisition</h1>
+<div id="api-challenge-1" class="section level2">
+<h2><span class="header-section-number">3.1</span> API (Challenge 1)</h2>
+</div>
+<div id="web-scraping-challenge-2" class="section level2">
+<h2><span class="header-section-number">3.2</span> WEB SCRAPING (Challenge 2)</h2>
+<p>Last compiled: 2020-12-06</p>
 <p>The following data are scraped from <a href="https://www.radon-bikes.de">Radon Bikes</a> (Last Update: 20/12/01)</p>
+<div id="result" class="section level3">
+<h3><span class="header-section-number">3.2.1</span> Result</h3>
 <p>The bike manufacturer has the following product families</p>
 <pre class="r"><code>bike_family_tbl &lt;- readRDS(&quot;data/bike_family_tbl.rds&quot;)
 
@@ -439,6 +463,7 @@ bike_family_tbl</code></pre>
 ## 2        2 trekking &amp; cross
 ## 3        3 e-bike          
 ## 4        4 roadbike</code></pre>
+<p><span class="math inline">\(~\)</span></p>
 <p>Each of them is on after another divided into two categories</p>
 <pre class="r"><code>bike_category_tbl &lt;- readRDS(&quot;data/bike_category_tbl.rds&quot;)
 
@@ -454,59 +479,8 @@ bike_category_tbl</code></pre>
 ## 6        6 trekking      
 ## 7        7 carbon        
 ## 8        8 alu</code></pre>
-<p>The data of the first category <code>hardtail</code> was scraped with</p>
-<pre class="r"><code># 3 COLLECT BIKE DATA ----
-library(tidyverse) # Main Package - Loads dplyr, purrr, etc.
-library(rvest)     # HTML Hacking &amp; Web Scraping
-library(stringi)   # character string/text processing
-
-url_category &lt;- &quot;https://www.radon-bikes.de/mountainbike/hardtail/bikegrid/&quot;
-html_category &lt;- read_html(url_category)
-
-
-# 3.1 Bike names  
-bike_names_tbl &lt;- html_category %&gt;%
-  
-  html_nodes(css = &quot;.a-heading--small&quot;) %&gt;%   # nodes
-  html_text() %&gt;%
-  str_extract(pattern = &quot;(?&lt;=\\s)[A-Z].*(?=\\n)&quot;) %&gt;%
-  na.omit() %&gt;%
-  
-  # Convert vector to tibble
-  enframe(name = &quot;product.id&quot;, value = &quot;model&quot;)
-  
-
-# 3.2 Prices
-bike_prices_tbl &lt;- html_category %&gt;%
-  
-  html_nodes(css = &quot;.m-bikegrid__price--active&quot;) %&gt;%   # nodes
-  html_text() %&gt;%
-  str_extract(pattern = &quot;\\d+&quot;) %&gt;%
-  na.omit() %&gt;%
-  
-
-# Convert vector to tibble
-  enframe(name = &quot;price.id&quot;, value = &quot;price_EUR&quot;)</code></pre>
-<p>The Data was cleaned and merged as shown below</p>
-<pre class="r"><code># MERGE DATA --------------------------------------------------------------
-
-data_tbl &lt;- left_join(bike_names_tbl,bike_prices_tbl, by = c(&quot;product.id&quot; = &quot;price.id&quot;))
-  
-# Cleaning
-data_cleaned_tbl &lt;- data_tbl %&gt;%
-  subset(!str_detect(model, &quot;Frameset&quot;)) %&gt;%
-  subset(!str_detect(model, &quot;NEW&quot;))
-
-# Add information and reorder
-data_cleaned_compl_tabl &lt;- data_cleaned_tbl %&gt;%
-  cbind(family = bike_family_tbl[[1,2]]) %&gt;%
-  cbind(category = bike_category_tbl[[1,2]]) %&gt;%
-  select(product.id, family, category, model, price_EUR)
-
-
-write_rds(data_cleaned_compl_tabl, &quot;data_cleaned_compl_tabl.rds&quot;)</code></pre>
-<div id="result" class="section level3">
-<h3><span class="header-section-number">1.1.1</span> Result</h3>
+<p><span class="math inline">\(~\)</span></p>
+<p>Final merged data</p>
 <pre class="r"><code>families &lt;- readRDS(&quot;data_cleaned_compl_tabl.rds&quot;)
 
 families</code></pre>
@@ -542,14 +516,116 @@ families</code></pre>
 ## 29         30 mountainbike hardtail        ZR LADY 6.0       699
 ## 30         31 mountainbike hardtail        ZR LADY 7.0       649
 ## 31         32 mountainbike hardtail        ZR LADY 8.0       849</code></pre>
+<p><span class="math inline">\(~\)</span> <span class="math inline">\(~\)</span></p>
+</div>
+<div id="code" class="section level3">
+<h3><span class="header-section-number">3.2.2</span> Code</h3>
+<p>The product structure was scraped as shown below</p>
+<pre class="r"><code># 2.0 COLLECT PRODUCT FAMILIES &amp; Categories ----
+
+# 2.1 Families
+
+url_home          &lt;- &quot;https://www.radon-bikes.de&quot;
+
+# Read in the HTML for the entire webpage
+html_home         &lt;- read_html(url_home)
+
+
+# Web scrape the for the families
+bike_family_tbl &lt;- html_home %&gt;%
+  
+  html_nodes(css = &quot;.megamenu &gt; a&quot;) %&gt;%   # nodes
+  html_text() %&gt;%
+  tolower() %&gt;%                           # convert into lowercase
+  
+  # Convert vector to tibble
+  enframe(name = &quot;position&quot;, value = &quot;family_class&quot;)
+
+bike_family_tbl &lt;- bike_family_tbl[-5,]
+
+write_rds(bike_family_tbl, &quot;bike_family_tbl&quot;)
+
+
+# 2.2 Categories
+
+bike_category_tbl &lt;- html_home %&gt;%
+  
+  html_nodes(css = &quot;.megamenu__item&quot;) %&gt;%   # nodes
+  html_text() %&gt;%
+  tolower() %&gt;%                           # convert into lowercase
+
+  # Convert vector to tibble
+  enframe(name = &quot;position&quot;, value = &quot;categories&quot;)
+
+  # delete superfluous rows
+  bike_category_tbl &lt;- bike_category_tbl[-9:-10,]
+  
+
+write_rds(bike_category_tbl, &quot;bike_category_tbl&quot;)</code></pre>
+<p><span class="math inline">\(~\)</span></p>
+<p>The data of the bikes of the first category <code>hardtail</code> was scraped with</p>
+<pre class="r"><code># 3 COLLECT BIKE DATA ----
+library(tidyverse) # Main Package - Loads dplyr, purrr, etc.
+library(rvest)     # HTML Hacking &amp; Web Scraping
+library(stringi)   # character string/text processing
+
+url_category &lt;- &quot;https://www.radon-bikes.de/mountainbike/hardtail/bikegrid/&quot;
+html_category &lt;- read_html(url_category)
+
+
+# 3.1 Bike names  
+bike_names_tbl &lt;- html_category %&gt;%
+  
+  html_nodes(css = &quot;.a-heading--small&quot;) %&gt;%   # nodes
+  html_text() %&gt;%
+  str_extract(pattern = &quot;(?&lt;=\\s)[A-Z].*(?=\\n)&quot;) %&gt;%
+  na.omit() %&gt;%
+  
+  # Convert vector to tibble
+  enframe(name = &quot;product.id&quot;, value = &quot;model&quot;)
+  
+
+# 3.2 Prices
+bike_prices_tbl &lt;- html_category %&gt;%
+  
+  html_nodes(css = &quot;.m-bikegrid__price--active&quot;) %&gt;%   # nodes
+  html_text() %&gt;%
+  str_extract(pattern = &quot;\\d+&quot;) %&gt;%
+  na.omit() %&gt;%
+  
+
+# Convert vector to tibble
+  enframe(name = &quot;price.id&quot;, value = &quot;price_EUR&quot;)</code></pre>
+<p><span class="math inline">\(~\)</span></p>
+<p>The Data was cleaned and merged as shown below</p>
+<pre class="r"><code># MERGE DATA --------------------------------------------------------------
+
+data_tbl &lt;- left_join(bike_names_tbl,bike_prices_tbl, by = c(&quot;product.id&quot; = &quot;price.id&quot;))
+  
+# Cleaning
+data_cleaned_tbl &lt;- data_tbl %&gt;%
+  subset(!str_detect(model, &quot;Frameset&quot;)) %&gt;%
+  subset(!str_detect(model, &quot;NEW&quot;))
+
+# Add information and reorder
+data_cleaned_compl_tabl &lt;- data_cleaned_tbl %&gt;%
+  cbind(family = bike_family_tbl[[1,2]]) %&gt;%
+  cbind(category = bike_category_tbl[[1,2]]) %&gt;%
+  select(product.id, family, category, model, price_EUR)
+
+
+write_rds(data_cleaned_compl_tabl, &quot;data_cleaned_compl_tabl.rds&quot;)</code></pre>
+<p><span class="math inline">\(~\)</span> <span class="math inline">\(~\)</span></p>
+<hr />
+<p><span class="math inline">\(~\)</span></p>
 </div>
 </div>
 </div>
 <div id="my-first-assignmend" class="section level1">
-<h1><span class="header-section-number">2</span> My first Assignmend</h1>
-<p>Last compiled: 2020-12-02</p>
+<h1><span class="header-section-number">4</span> My first Assignmend</h1>
+<p>Last compiled: 2020-12-06</p>
 <div id="revenue-analysis-by-state" class="section level2">
-<h2><span class="header-section-number">2.1</span> Revenue analysis by state</h2>
+<h2><span class="header-section-number">4.1</span> Revenue analysis by state</h2>
 <pre class="r"><code>  sales_by_state_tbl &lt;- readRDS(&quot;data/sales_by_state_tbl.rds&quot;)
 
   library(ggrepel)
@@ -570,10 +646,10 @@ families</code></pre>
       subtitle = &quot;in Germany&quot;,
       x = &quot;State&quot;, # Override defaults for x and y
       y = &quot;Revenue&quot;)</code></pre>
-<p><img src="journal_files/figure-html/unnamed-chunk-6-1.png" width="960" /></p>
+<p><img src="journal_files/figure-html/unnamed-chunk-7-1.png" width="960" /></p>
 </div>
 <div id="revenue-analysis-over-years-per-state" class="section level2">
-<h2><span class="header-section-number">2.2</span> Revenue analysis over years per state</h2>
+<h2><span class="header-section-number">4.2</span> Revenue analysis over years per state</h2>
 <pre class="r"><code>  sales_by_year_state_tbl &lt;- readRDS(&quot;data/sales_by_year_state_tbl.rds&quot;)  
 
   sales_by_year_state_tbl %&gt;%
@@ -594,7 +670,7 @@ families</code></pre>
       title = &quot;Revenue by year and state&quot;,
       subtitle = &quot;in Germany&quot;,
       fill = &quot;State&quot;) # Changes the legend name</code></pre>
-<p><img src="journal_files/figure-html/unnamed-chunk-7-1.png" width="960" /></p>
+<p><img src="journal_files/figure-html/unnamed-chunk-8-1.png" width="960" /></p>
 </div>
 </div>
 
