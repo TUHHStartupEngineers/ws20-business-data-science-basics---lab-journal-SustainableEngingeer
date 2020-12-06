@@ -704,15 +704,17 @@ write_rds(morality_rate, &quot;map-plot_morality-rate.rds&quot;)</code></pre>
 </div>
 </div>
 <div id="rd-assignmend-data-wrangling" class="section level1">
-<h1><span class="header-section-number">2</span> 3rd Assignmend – Data Wrangling</h1>
+<h1><span class="header-section-number">2</span> 3rd Assignmend – DATA WRANGLING</h1>
 <p><span class="math inline">\(~\)</span></p>
 <p>From now on: Teamwork with Philip Salmang</p>
+<div id="preparation-of-data" class="section level2">
+<h2><span class="header-section-number">2.1</span> Preparation of Data</h2>
+<p>In this step, all needded data was read into the variables <code>patent_tbl</code>,<code>patent_assignee_tbl</code>,<code>assignee_tbl</code> and <code>uspc_tbl</code>. The Data was wrangled in such a way, that not needed columns were deleted and new tables were created by merging the existings tables. The specific variables needed in the upcoming challenges are mentioned inside the code.</p>
 <pre class="r"><code>library(data.table)   # Extension of &#39;data.frame&#39; for fast manipulation of large Data 
 library(tidyverse)    # Main Package - Loads dplyr, purrr, etc.
 library(vroom)        # Read and Write Rectangular Text Data Quickly
 library(lubridate)
 
-
 # 1.0 Set up and defining columns that we are interested in ----
 # 1.0.1 for files that will be read
 col_types &lt;- list(
@@ -737,7 +739,7 @@ uspc_col_types &lt;- list(patent_id = col_character(),
 ## 1.1 Reading data to create tables
 # 1.1.1 Creating patent_tbl
 patent_tbl &lt;- vroom(
-  file       = &quot;/Users/philipsalmang/Documents/R/Business Data Science Basics/DS_101/00_data/Patent/raw_data/patent.tsv&quot;, 
+  file       = &quot;02_data_wrangling/patent.tsv&quot;, 
   delim      = &quot;\t&quot;, 
   col_types  = col_types,
   na         = c(&quot;&quot;, &quot;NA&quot;, &quot;NULL&quot;)) 
@@ -745,14 +747,14 @@ setDT(patent_tbl)
 
 # 1.1.2 Creating patent_assignee_tbl
 patent_assignee_tbl &lt;- vroom(
-  file       = &quot;/Users/philipsalmang/Documents/R/Business Data Science Basics/DS_101/00_data/Patent/raw_data/patent_assignee.tsv&quot;, 
+  file       = &quot;02_data_wrangling/patent_assignee.tsv&quot;, 
   delim      = &quot;\t&quot;, 
   col_types  = patent_assignee_col_types,
   na         = c(&quot;&quot;, &quot;NA&quot;, &quot;NULL&quot;))
 setDT(patent_assignee_tbl)
 # 1.1.3 Creating assignee_tbl
 assignee_tbl &lt;- vroom(
-  file       = &quot;/Users/philipsalmang/Documents/R/Business Data Science Basics/DS_101/00_data/Patent/raw_data/assignee.tsv&quot;, 
+  file       = &quot;02_data_wrangling/assignee.tsv&quot;, 
   delim      = &quot;\t&quot;, 
   col_types  = assignee_col_types,
   na         = c(&quot;&quot;, &quot;NA&quot;, &quot;NULL&quot;))
@@ -760,161 +762,7 @@ setDT(assignee_tbl)
 
 ## 1.1.4 Creating uspc_tbl
 uspc_tbl &lt;- vroom(
-  file       = &quot;/Users/philipsalmang/Documents/R/Business Data Science Basics/DS_101/00_data/Patent/raw_data/uspc.tsv&quot;, 
-  delim      = &quot;\t&quot;, 
-  col_types  = uspc_col_types,
-  na         = c(&quot;&quot;, &quot;NA&quot;, &quot;NULL&quot;)) %&gt;%
-  # remove column sequence since it is not needed
-  subset(select = -sequence) 
-setDT(uspc_tbl)
-
-# make a uspc table with unique combos of patent_id and mainclass_id
-uspc_unique_tbl &lt;- uspc_tbl[, .(patent_id, mainclass_id)] %&gt;% unique()
-
-## 1.3 Merge necessary tables for extracting relevant data
-
-# 1.3.1 Merge patent_assignee_tbl and assignee_tbl
-
-patent_assignee_merge_dt &lt;- merge(x = assignee_tbl, y = patent_assignee_tbl,
-                                  by.x = &quot;id&quot;,
-                                  by.y = &quot;assignee_id&quot;)
-# 1.3.2 Merge patent_assignee_merge_dt and patent_tbl;
-# patent_dominance_dt used in Challenge 1 and 2 
-patent_dominance_dt &lt;- merge(x = patent_assignee_merge_dt, y = patent_tbl,
-                             by.x = &quot;patent_id&quot;,
-                             by.y = &quot;id&quot;,
-                             all.x = T, 
-                             all.y = F)
-
-# Change Date into year, month, day
-patent_dominance_dt &lt;- patent_dominance_dt[, .(patent_id, 
-                                               id,
-                                               type,
-                                               organization, 
-                                               year = year(date),
-                                               month = month(date),
-                                               day = day(date))]
-
-# 1.3.3 Merge patent_dominance_dt and uspc_tbl; 
-# patent_dominance_innovation_dt only used in Challenge 3
-
-patent_dominance_innovation_dt &lt;- merge(x = uspc_unique_tbl, 
-                                        y = patent_dominance_dt,
-                                        by = &quot;patent_id&quot;,
-                                        all.x = F, 
-                                        all.y = T)
-
-
-## 2.0 Challenge 1, Patent Dominance: What US company / corporation has the most patents? List the ----
-# 10 US companies with the most assigned/granted patents.
-# include only type = 2,4,6,8,9 since these are US companies, sort by organizations
-# and count the number of Patents they have. Omit any N/A values. Sort by 
-# decreasing order
-patent_dominance_US_dt &lt;- 
-  patent_dominance_dt[!is.na(organization)][         # remove any rows containing NA 
-    type %in% c(2,4,6,8,9),.N, by = organization     # Filter for US companies and count
-  ][,.(Nr_Patents = N, organization)][               # Rename N 
-    order(Nr_Patents, decreasing = TRUE)             # Order Nr_Patents decreasing order
-  ][1:10,]                                           # slice to get first 10 companies
-write_rds(patent_dominance_US_dt,&quot;patent_dominance_US_dt.rds&quot;)
-
-## 3.0 Challenge 2, Recent patent activity: What US company had the most patents granted in July? ----
-# List the top 10 companies with the most new granted patents for July. 
-# include only type = 2,4,6,8,9 since these are US companies, sort by organizations
-# and filter month 7 and count the number of Patents they have. 
-# Omit any N/A values. Sort by decreasing order
-patent_dominance_july_US_dt &lt;- 
-  patent_dominance_dt[
-    !is.na(organization)                             # remove any rows containing NA 
-  ][month == 7,.(id, type, organization)][           # Filter for month 7
-    type %in% c(2,4,6,8,9),.N, by = organization     # Filter for US companies and count 
-  ][,.(Nr_Patents = N, organization)][               # Rename N 
-    order(Nr_Patents,decreasing = TRUE)              # Order Nr_Patents decreasing order
-  ][1:10,]                                           # slice to get first 10 companies
-
-write_rds(patent_dominance_july_US_dt,&quot;patent_dominance_july_US_dt.rds&quot;)
-
-
-## 4.0 Challenge 3, Innovation in Tech:  What is the most innovative tech sector?  ----
-# For the top 10 companies (worldwide) with the most patents, 
-# what are the top 5 USPTO tech main classes?
-
-# 4.1 Extracting Top 10 Organizations with most patents
-patent_dominance_world_dt &lt;- 
-  patent_dominance_dt[!is.na(organization)][         # remove any rows containing NA 
-    ,.N, by = organization                           # Count the amount of patents for each company
-  ][,.(Nr_Patents = N, organization)][               # Rename N 
-    order(Nr_Patents,decreasing = TRUE)              # Order Nr_Patents decreasing order
-  ][1:10,]                                           # slice to get first 10 companies
-
-# 4.2 Extracting Top 5 mainclass_id of Top 10 Organizations with
-# patent_dominance_innovation_dt
-top_mainclass &lt;- merge(x = patent_dominance_world_dt,
-                       y = patent_dominance_innovation_dt,
-                       by = &quot;organization&quot;) %&gt;%   
-  # Remove unnecessary columns
-  subset(select = -c(id, type, year, month, day, Nr_Patents)) 
-
-# Extracting Top 5 mainclasses out of top_mainclass
-top_5_mainclass &lt;- 
-  top_mainclass[!is.na(mainclass_id)][               # remove any rows containing NA 
-    ,.N, by = mainclass_id                           # Count the amount of each mainclass_id
-  ][,
-    .(Nr_mainclass = N, mainclass_id)][              # Rename N 
-      order(Nr_mainclass, decreasing = TRUE)         # Order Nr_mainclass decreasing order
-    ][1:5,]                                          # slice to get first 5 mainclass_id
-write_rds(top_5_mainclass,&quot;top_5_mainclass.rds&quot;)</code></pre>
-<div id="preparation-of-data" class="section level2">
-<h2><span class="header-section-number">2.1</span> Preparation of Data</h2>
-<pre class="r"><code>library(vroom)   
-# 1.0 Set up and defining columns that we are interested in ----
-# 1.0.1 for files that will be read
-col_types &lt;- list(
-  id = col_character(),
-  date = col_date(&quot;%Y-%m-%d&quot;),
-  num_claims = col_double())
-
-# 1.0.2 patent_assignee_col_types
-patent_assignee_col_types &lt;- list(patent_id = col_character(),   
-                                  assignee_id = col_character())
-
-# 1.0.3 assignee_col_types
-assignee_col_types &lt;- list(id = col_character(),
-                           type = col_character(),
-                           organization = col_character())
-
-# 1.0.4 uspc_tbl
-uspc_col_types &lt;- list(patent_id = col_character(), 
-                       mainclass_id = col_character() , 
-                       sequence = col_character())
-
-## 1.1 Reading data to create tables
-# 1.1.1 Creating patent_tbl
-patent_tbl &lt;- vroom(
-  file       = &quot;/Users/philipsalmang/Documents/R/Business Data Science Basics/DS_101/00_data/Patent/raw_data/patent.tsv&quot;, 
-  delim      = &quot;\t&quot;, 
-  col_types  = col_types,
-  na         = c(&quot;&quot;, &quot;NA&quot;, &quot;NULL&quot;)) 
-setDT(patent_tbl)
-
-# 1.1.2 Creating patent_assignee_tbl
-patent_assignee_tbl &lt;- vroom(
-  file       = &quot;/Users/philipsalmang/Documents/R/Business Data Science Basics/DS_101/00_data/Patent/raw_data/patent_assignee.tsv&quot;, 
-  delim      = &quot;\t&quot;, 
-  col_types  = patent_assignee_col_types,
-  na         = c(&quot;&quot;, &quot;NA&quot;, &quot;NULL&quot;))
-setDT(patent_assignee_tbl)
-# 1.1.3 Creating assignee_tbl
-assignee_tbl &lt;- vroom(
-  file       = &quot;/Users/philipsalmang/Documents/R/Business Data Science Basics/DS_101/00_data/Patent/raw_data/assignee.tsv&quot;, 
-  delim      = &quot;\t&quot;, 
-  col_types  = assignee_col_types,
-  na         = c(&quot;&quot;, &quot;NA&quot;, &quot;NULL&quot;))
-setDT(assignee_tbl)
-
-## 1.1.4 Creating uspc_tbl
-uspc_tbl &lt;- vroom(
-  file       = &quot;/Users/philipsalmang/Documents/R/Business Data Science Basics/DS_101/00_data/Patent/raw_data/uspc.tsv&quot;, 
+  file       = &quot;02_data_wrangling/uspc.tsv&quot;, 
   delim      = &quot;\t&quot;, 
   col_types  = uspc_col_types,
   na         = c(&quot;&quot;, &quot;NA&quot;, &quot;NULL&quot;)) %&gt;%
@@ -957,7 +805,6 @@ patent_dominance_innovation_dt &lt;- merge(x = uspc_unique_tbl,
                                         by = &quot;patent_id&quot;,
                                         all.x = F, 
                                         all.y = T)</code></pre>
-<p>In this step, all needded data was read into the variables <code>patent_tbl</code>,<code>patent_assignee_tbl</code>,<code>assignee_tbl</code> and <code>uspc_tbl</code>. The Data was wrangled in such a way, that not needed columns were deleted and new tables were created by merging the existings tables. The specific variables needed in the upcoming challenges are mentioned inside the code.</p>
 <p><span class="math inline">\(~\)</span></p>
 </div>
 <div id="patent-dominance-challenge-1" class="section level2">
@@ -1317,11 +1164,11 @@ write_rds(data_cleaned_compl_tabl, &quot;data_cleaned_compl_tabl.rds&quot;)</cod
       subtitle = &quot;in Germany&quot;,
       x = &quot;State&quot;, # Override defaults for x and y
       y = &quot;Revenue&quot;)</code></pre>
-<p><img src="journal_files/figure-html/unnamed-chunk-20-1.png" width="960" /></p>
+<p><img src="journal_files/figure-html/unnamed-chunk-19-1.png" width="960" /></p>
 <p><span class="math inline">\(~\)</span></p>
 </div>
-<div id="revenue-analysis-over-years-per-state" class="section level2">
-<h2><span class="header-section-number">4.2</span> Revenue analysis over years per state</h2>
+<div id="revenue-analysis-over-years-per-state-challenge-1.2" class="section level2">
+<h2><span class="header-section-number">4.2</span> Revenue analysis over years per state (Challenge 1.2)</h2>
 <pre class="r"><code>  sales_by_year_state_tbl &lt;- readRDS(&quot;data/sales_by_year_state_tbl.rds&quot;)  
 
   sales_by_year_state_tbl %&gt;%
@@ -1342,7 +1189,7 @@ write_rds(data_cleaned_compl_tabl, &quot;data_cleaned_compl_tabl.rds&quot;)</cod
       title = &quot;Revenue by year and state&quot;,
       subtitle = &quot;in Germany&quot;,
       fill = &quot;State&quot;) # Changes the legend name</code></pre>
-<p><img src="journal_files/figure-html/unnamed-chunk-21-1.png" width="960" /></p>
+<p><img src="journal_files/figure-html/unnamed-chunk-20-1.png" width="960" /></p>
 </div>
 </div>
 
